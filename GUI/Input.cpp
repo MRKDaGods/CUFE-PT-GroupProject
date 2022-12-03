@@ -52,6 +52,24 @@ ActionType Input::GetUserAction() const
 			switch (ClickedItemOrder)
 			{
 			case ITM_RECT: return DRAW_RECT;
+			case ITM_SQUARE: return Draw_square;
+			case ITM_TRI: return Draw_triangle;
+			case ITM_HEXA: return Draw_heaxgon;
+			case ITM_CIRCLE: return Draw_circle;
+			case ITM_COLOR: return SelectColor ;
+			case ITM_Delete: return DeleteFigure;
+			case ITM_Undo: return Undo;
+			case ITM_Redo: return Redo;
+			case ITM_Clear: return ClearAll;
+			case ITM_StarR: return StartRecording;
+			case ITM_StopR: return StopRecording;
+			case ITM_PlayR: return PLayRecording;
+			case ITM_SaveG: return SaveGraph;
+			case ITM_load: return loadGraph;
+
+
+
+			case ITM_SWITCHP: return TO_PLAY;
 			case ITM_EXIT: return EXIT;	
 			
 			default: return EMPTY;	//A click on empty place in desgin toolbar
@@ -69,6 +87,17 @@ ActionType Input::GetUserAction() const
 	}
 	else	//GUI is in PLAY mode
 	{
+		if (y >= 0 && y < UI.ToolBarHeight)
+		{
+			int ClickedItemOrder = (x / UI.MenuItemWidth);
+			switch (ClickedItemOrder)
+			{
+			case ITM_SWITCHD: return TO_DRAW;
+			case ITM_EXIT: return EXIT;
+			}
+
+		}
+
 		///TODO:
 		//perform checks similar to Draw mode checks above
 		//and return the correspoding action

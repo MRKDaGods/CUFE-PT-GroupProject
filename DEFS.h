@@ -12,7 +12,26 @@ enum ActionType //The actions supported (you can add more if needed)
 	TO_PLAY,		//Switch interface to Play mode
 	EMPTY,			//A click on empty place in the toolbar
 	DRAWING_AREA,	//A click on the drawing area
-	STATUS			//A click on the status bar
+	STATUS,			//A click on the status bar
+	Draw_square,    //Draw square
+	Draw_triangle,
+	SelectFigure,
+	Draw_heaxgon,
+	Draw_circle,
+	SelectColor,
+	DeleteFigure,
+	MoveFigure,
+	Undo,
+	Redo,
+	ClearAll,
+	StartRecording,
+	StopRecording,
+	PLayRecording,
+	SaveGraph,
+	loadGraph
+
+
+
 
 	///TODO: Add the other action types of the two modes
 };
