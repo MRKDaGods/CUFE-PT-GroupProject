@@ -1,3 +1,7 @@
+#include "Common.h"
+
+#ifdef TEST_MODE
+
 #include "GUI\Input.h"
 #include "GUI\Output.h"
 
@@ -193,7 +197,8 @@ int main()
 		case EXIT:				
 				break;
 		}
-	}while(ActType != EXIT);
+	}
+	while(ActType != EXIT);
 
 
 	/// Exiting
@@ -207,3 +212,4 @@ int main()
 }
 
 
+#endif

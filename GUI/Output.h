@@ -1,13 +1,25 @@
 #ifndef OUPTUT_H
 #define OUPTUT_H
+
 #include "Input.h"
+#include "../Utils/Rect.h"
+#include "../Utils/Color.h"
 
 class Output	//The application manager should have a pointer to this class
 {
 private:	
 	window* pWind;	//Pointer to the Graphics Window
+	void* m_App; //Pointer to Application, avoid cyclic header, declare as void*
+
+
+	//Returns the gfx info from Application
+	GfxInfo* GetGfxInfo() const;
+
+	//Prepares the graphics info for rendering the next figure, and returns the draw style
+	drawstyle PrepareFigureRendering(bool selected, GfxInfo** callerGfx = 0) const;
+
 public:
-	Output();		
+	Output(void* app);		
 
 	window* CreateWind(int, int, int , int) const; //creates the application window
 	void CreateDrawToolBar() const;	//creates Draw mode toolbar & menu
@@ -17,20 +29,44 @@ public:
 	Input* CreateInput() const; //creates a pointer to the Input object	
 	void ClearStatusBar() const;	//Clears the status bar
 	void ClearDrawArea() const;	//Clears the drawing area
+
+	// -- FRONTEND related --
+	//Clears a specified region
+	void ClearArea(Rect rect) const;
+
+	//Draws an image of specified rect and path
+	void DrawImage(Rect rect, string path);
+
+	//Draws a filled rect
+	void DrawRect(Rect rect, Color color);
+
+	void DrawLine(Vector2 p1, Vector2 p2, int w, Color color);
+
+	void DrawString(Rect rect, string msg, int fontSz);
 	
 	// -- Figures Drawing functions
-	void DrawRect(Point P1, Point P2, GfxInfo RectGfxInfo, bool selected=false) const;  //Draw a rectangle
-	void DrawSquare(Point P1, Point P2, Point P3, Point P4, GfxInfo SquareGfxInfo, bool selected = false) const;
-	void DrawTri(Point P1, Point P2, Point P3, GfxInfo TriGfxInfo, bool selected = false) const;
-	void DrawCirc(Point P1, Point P2, GfxInfo CircGfxInfo, bool selected = false) const;
-	///Make similar functions for drawing all other figure types.
+
+	//Draw a rectangle from top left and bottom right points
+	void DrawRectangle(Point topLeft, Point botRight, bool selected = false) const;
+
+	//Draw a square from given center
+	void DrawSquare(Point center, bool selected = false) const;
+
+	//Draw a triangle from 3 vertices
+	void DrawTriangle(Point v1, Point v2, Point v3, bool selected = false) const;
+
+	//Draw a hexagon from given center
+	void DrawHexagon(Point center, bool selected = false) const;
+
+	//Draw a circle from given center and a point on the circumference
+	void DrawCircle(Point center, Point radiusPoint, bool selected = false) const;
 	
-	void PrintMessage(string msg) const;	//Print a message on Status bar
+	//Print a message on Status bar
+	void PrintMessage(string msg) const;
 
 	color getCrntDrawColor() const;	//get current drwawing color
 	color getCrntFillColor() const;	//get current filling color
 	int getCrntPenWidth() const;		//get current pen width
-
 	
 	~Output();
 };

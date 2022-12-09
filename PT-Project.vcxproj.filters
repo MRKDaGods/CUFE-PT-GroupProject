@@ -7,8 +7,14 @@
     <Filter Include="CMUgraphicsLib\JPEG">
       <UniqueIdentifier>{74881736-22be-4b44-90b6-09a29eb1aa85}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GUI Classes">
+    <Filter Include="Core">
+      <UniqueIdentifier>{e3df1efb-17bc-425f-8d18-bf3f9add4d47}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GUI">
       <UniqueIdentifier>{03fd4e0d-92e0-4271-bb9b-d6e9f21ec35f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GUI\Frontend">
+      <UniqueIdentifier>{3d5ff0ea-53b7-4092-b3a4-8c232956cb78}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -118,15 +124,33 @@
       <Filter>CMUgraphicsLib\JPEG</Filter>
     </ClCompile>
     <ClCompile Include="GUI\Input.cpp">
-      <Filter>GUI Classes</Filter>
+      <Filter>GUI</Filter>
     </ClCompile>
     <ClCompile Include="GUI\Output.cpp">
-      <Filter>GUI Classes</Filter>
+      <Filter>GUI</Filter>
     </ClCompile>
     <ClCompile Include="TestCode.cpp" />
     <ClCompile Include="CMUgraphicsLib\colors.cpp">
       <Filter>CMUgraphicsLib</Filter>
     </ClCompile>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Core\ActionData.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Application.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Frontend\UIWidget.cpp" />
+    <ClCompile Include="GUI\Frontend\UIDisplay.cpp" />
+    <ClCompile Include="Utils\Vector2.cpp" />
+    <ClCompile Include="GUI\Frontend\UITouchEvent.cpp" />
+    <ClCompile Include="GUI\Frontend\UISprite.cpp" />
+    <ClCompile Include="GUI\Frontend\UIFrontend.cpp" />
+    <ClCompile Include="GUI\Frontend\UIShapeList.cpp" />
+    <ClCompile Include="GUI\Frontend\UIImageButton.cpp" />
+    <ClCompile Include="GUI\Frontend\UIWindow.cpp" />
+    <ClCompile Include="GUI\Frontend\UILineRenderer.cpp" />
+    <ClCompile Include="GUI\Frontend\UILabel.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CMUgraphicsLib\auxil.h">
@@ -190,14 +214,34 @@
       <Filter>CMUgraphicsLib\JPEG</Filter>
     </ClInclude>
     <ClInclude Include="GUI\Input.h">
-      <Filter>GUI Classes</Filter>
+      <Filter>GUI</Filter>
     </ClInclude>
     <ClInclude Include="GUI\Output.h">
-      <Filter>GUI Classes</Filter>
+      <Filter>GUI</Filter>
     </ClInclude>
     <ClInclude Include="GUI\UI_Info.h">
-      <Filter>GUI Classes</Filter>
+      <Filter>GUI</Filter>
     </ClInclude>
     <ClInclude Include="DEFS.h" />
+    <ClInclude Include="Common.h" />
+    <ClInclude Include="Core\ActionData.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Application.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Frontend\UIWidget.h" />
+    <ClInclude Include="Utils\Rect.h" />
+    <ClInclude Include="Utils\Vector2.h" />
+    <ClInclude Include="GUI\Frontend\UITouchEvent.h" />
+    <ClInclude Include="GUI\Frontend\UIDisplay.h" />
+    <ClInclude Include="GUI\Frontend\UISprite.h" />
+    <ClInclude Include="GUI\Frontend\UIFrontend.h" />
+    <ClInclude Include="GUI\Frontend\UIShapeList.h" />
+    <ClInclude Include="GUI\Frontend\UIImageButton.h" />
+    <ClInclude Include="GUI\Frontend\UIWindow.h" />
+    <ClInclude Include="Utils\Color.h" />
+    <ClInclude Include="GUI\Frontend\UILineRenderer.h" />
+    <ClInclude Include="GUI\Frontend\UILabel.h" />
   </ItemGroup>
 </Project>

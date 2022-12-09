@@ -12,7 +12,7 @@ void Input::GetPointClicked(int &x, int &y) const
 	pWind->WaitMouseClick(x, y);	//Wait for mouse click
 }
 
-string Input::GetSrting(Output *pO) const 
+string Input::GetString(Output *pO) const 
 {
 	string Label;
 	char Key;
@@ -32,45 +32,56 @@ string Input::GetSrting(Output *pO) const
 	}
 }
 
+Point Input::GetMousePos()
+{
+	Point p;
+	pWind->GetMouseCoord(p.x, p.y);
+
+	return p;
+}
+
+bool Input::GetMouseDown()
+{
+	Point p;
+	return pWind->GetMouseClick(p.x, p.y) != NO_CLICK;
+}
+
 //This function reads the position where the user clicks to determine the desired action
 ActionType Input::GetUserAction() const
 {	
 	int x,y;
 	pWind->WaitMouseClick(x, y);	//Get the coordinates of the user click
 
-	if(UI.InterfaceMode == MODE_DRAW)	//GUI in the DRAW mode
+	if (UI.InterfaceMode == MODE_DRAW)	//GUI in the DRAW mode
 	{
 		//[1] If user clicks on the Toolbar
 		if ( y >= 0 && y < UI.ToolBarHeight)
 		{	
 			//Check whick Menu item was clicked
 			//==> This assumes that menu items are lined up horizontally <==
-			int ClickedItemOrder = (x / UI.MenuItemWidth);
+			int ClickedItemOrder = x / (UI.MenuItemWidth + UI.IconSeperatorWidth);
 			//Divide x coord of the point clicked by the menu item width (int division)
 			//if division result is 0 ==> first item is clicked, if 1 ==> 2nd item and so on
 
 			switch (ClickedItemOrder)
 			{
-			case ITM_RECT: return DRAW_RECT;
-			case ITM_SQUARE: return Draw_square;
-			case ITM_TRI: return Draw_triangle;
-			case ITM_HEXA: return Draw_heaxgon;
-			case ITM_CIRCLE: return Draw_circle;
-			case ITM_COLOR: return SelectColor ;
-			case ITM_Delete: return DeleteFigure;
-			case ITM_Undo: return Undo;
-			case ITM_Redo: return Redo;
-			case ITM_Clear: return ClearAll;
-			case ITM_StarR: return StartRecording;
-			case ITM_StopR: return StopRecording;
-			case ITM_PlayR: return PLayRecording;
-			case ITM_SaveG: return SaveGraph;
-			case ITM_load: return loadGraph;
+			case DRAW_ITM_RECT: return ACTION_DRAW_RECTANGLE;
+			case DRAW_ITM_SQUARE: return ACTION_DRAW_SQUARE;
+			case DRAW_ITM_TRIANGLE: return ACTION_DRAW_TRIANGLE;
+			case DRAW_ITM_HEXAGON: return ACTION_DRAW_HEXAGON;
+			case DRAW_ITM_CIRCLE: return ACTION_DRAW_CIRCLE;
+			case DRAW_ITM_SELECT: return ACTION_DRAW_SELECT;
+			case DRAW_ITM_COL_BLACK: return ACTION_DRAW_COL_BLACK;
+			case DRAW_ITM_COL_YELLOW: return ACTION_DRAW_COL_YELLOW;
+			case DRAW_ITM_COL_ORANGE: return ACTION_DRAW_COL_ORANGE;
+			case DRAW_ITM_COL_RED: return ACTION_DRAW_COL_RED;
+			case DRAW_ITM_COL_GREEN: return ACTION_DRAW_COL_GREEN;
+			case DRAW_ITM_COL_BLUE: return ACTION_DRAW_COL_BLUE;
 
 
 
 			case ITM_SWITCHP: return TO_PLAY;
-			case ITM_EXIT: return EXIT;	
+			//case ITM_EXIT: return EXIT;	
 			
 			default: return EMPTY;	//A click on empty place in desgin toolbar
 			}
@@ -93,7 +104,7 @@ ActionType Input::GetUserAction() const
 			switch (ClickedItemOrder)
 			{
 			case ITM_SWITCHD: return TO_DRAW;
-			case ITM_EXIT: return EXIT;
+			//case ITM_EXIT: return EXIT;
 			}
 
 		}

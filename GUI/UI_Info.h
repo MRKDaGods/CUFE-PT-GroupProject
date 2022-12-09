@@ -13,15 +13,26 @@ enum GUI_MODE	//Graphical user interface mode
 	MODE_PLAY	//Playing mode
 };
 
-enum DrawMenuItem //The items of the Draw menu (you should add more items)
+enum DrawMenuItem //The items of the Draw menu
 {
-	//Note: Items are **(ordered)** here as they appear in menu
-	//If you want to change the menu items order, change the order here
-	ITM_RECT,		//Recangle item in menu
-	ITM_SQUARE,
-	ITM_TRI,
-	ITM_HEXA,
-	ITM_CIRCLE,
+	DRAW_ITM_RECT,		//rectangle
+	DRAW_ITM_SQUARE, //square
+	DRAW_ITM_TRIANGLE, //triangle
+	DRAW_ITM_HEXAGON, //hexagon
+	DRAW_ITM_CIRCLE, //circle
+
+	DRAW_ITM_SELECT, //select
+
+	DRAW_ITM_COL_BLACK, //black
+	DRAW_ITM_COL_YELLOW, //yellow
+	DRAW_ITM_COL_ORANGE, //orange
+	DRAW_ITM_COL_RED, //red
+	DRAW_ITM_COL_GREEN, //green
+	DRAW_ITM_COL_BLUE, //blue
+
+	DRAW_ITM_COUNT,
+
+	ITM_EXIT,
 	ITM_COLOR,
 	ITM_Delete,
 	ITM_Undo,
@@ -32,13 +43,8 @@ enum DrawMenuItem //The items of the Draw menu (you should add more items)
 	ITM_PlayR,
 	ITM_SaveG,
 	ITM_load,
-	
-	//TODO: Add more items names here
 
 	ITM_SWITCHP,
-	ITM_EXIT,		//Exit item
-	
-	DRAW_ITM_COUNT		//no. of menu items ==> This should be the last line in this enum
 	
 };
 
@@ -81,7 +87,17 @@ struct UI_Info	//User Interface Info.
 	color StatusBarColor;	//Status bar color
 	int PenWidth;			//width of the pen that draws shapes
 
-	/// Add more members if needed
+	//Toolbar icon padding
+	struct
+	{
+		int top;
+		int bottom;
+		int left;
+		int right;
+	} IconPadding;
+
+	//Toolbar icon seperator width
+	int IconSeperatorWidth;
 	
 }UI;	//create a global object UI
 

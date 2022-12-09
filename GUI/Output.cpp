@@ -1,21 +1,57 @@
 #include "Output.h"
+#include "../Core/Application.h"
 
+#define _USE_MATH_DEFINES
+#include <math.h>
 
-Output::Output()
+#define DEFINE_GFX_INFO GfxInfo* const gfxInfo = GetGfxInfo()
+
+GfxInfo* Output::GetGfxInfo() const
 {
+	return ((Application*)m_App)->GetGfxInfo();
+}
+
+drawstyle Output::PrepareFigureRendering(bool selected, GfxInfo** callerGfx) const
+{
+	DEFINE_GFX_INFO;
+
+	//set the gfx info of the caller incase needed
+	if (callerGfx != 0)
+	{
+		*callerGfx = gfxInfo;
+	}
+
+	//set draw color
+	color drawCol = selected ? UI.HighlightColor : gfxInfo->draw_col;
+	pWind->SetPen(drawCol, 1);
+
+	if (gfxInfo->is_filled)
+	{
+		pWind->SetBrush(gfxInfo->fill_col);
+		return FILLED;
+	}
+
+	return FRAME;
+}
+
+Output::Output(void* app)
+{
+	//set app
+	m_App = app;
+
 	//Initialize user interface parameters
 	UI.InterfaceMode = MODE_DRAW;
-	
+
 	UI.width = 1250;
 	UI.height = 650;
 	UI.wx = 5;
-	UI.wy =5;
+	UI.wy = 5;
 
-	
+
 	UI.StatusBarHeight = 50;
 	UI.ToolBarHeight = 50;
 	UI.MenuItemWidth = 80;
-	
+
 	UI.DrawColor = BLUE;	//Drawing color
 	UI.FillColor = GREEN;	//Filling color
 	UI.MsgColor = RED;		//Messages color
@@ -24,14 +60,21 @@ Output::Output()
 	UI.StatusBarColor = TURQUOISE;
 	UI.PenWidth = 3;	//width of the figures frames
 
-	
+	//padding
+	UI.IconPadding = {
+		1, 1, 1, 1
+	};
+
+	//seperator width
+	UI.IconSeperatorWidth = 1;
+
 	//Create the output window
 	pWind = CreateWind(UI.width, UI.height, UI.wx, UI.wy);
 	//Change the title
 	pWind->ChangeTitle("Paint for Kids - Programming Techniques Project");
-	
-	CreateDrawToolBar();
-	CreateStatusBar();
+
+	//CreateDrawToolBar();
+	//CreateStatusBar();
 }
 
 
@@ -73,27 +116,39 @@ void Output::CreateDrawToolBar() const
 {
 	UI.InterfaceMode = MODE_DRAW;
 
-	//You can draw the tool bar icons in any way you want.
-	//Below is one possible way
-	
-	//First prepare List of images for each menu item
-	//To control the order of these images in the menu, 
-	//reoder them in UI_Info.h ==> enum DrawMenuItem
 	string MenuItemImages[DRAW_ITM_COUNT];
-	MenuItemImages[ITM_RECT] = "images\\MenuItems\\Menu_Rect.jpg";
-	MenuItemImages[ITM_EXIT] = "images\\MenuItems\\Menu_Exit.jpg";
+	MenuItemImages[DRAW_ITM_RECT] = "images\\draw\\shapes\\img_rect.jpg";
+	MenuItemImages[DRAW_ITM_SQUARE] = "images\\draw\\shapes\\img_square.jpg";
+	MenuItemImages[DRAW_ITM_TRIANGLE] = "images\\draw\\shapes\\img_triangle.jpg";
+	MenuItemImages[DRAW_ITM_HEXAGON] = "images\\draw\\shapes\\img_hexagon.jpg";
+	MenuItemImages[DRAW_ITM_CIRCLE] = "images\\draw\\shapes\\img_circle.jpg";
+	MenuItemImages[DRAW_ITM_SELECT] = "images\\draw\\other\\img_select.jpg";
 
-	//TODO: Prepare images for each menu item and add it to the list
+	MenuItemImages[DRAW_ITM_COL_BLACK] = "images\\draw\\colors\\img_black.jpg";
+	MenuItemImages[DRAW_ITM_COL_YELLOW] = "images\\draw\\colors\\img_yellow.jpg";
+	MenuItemImages[DRAW_ITM_COL_ORANGE] = "images\\draw\\colors\\img_orange.jpg";
+	MenuItemImages[DRAW_ITM_COL_RED] = "images\\draw\\colors\\img_red.jpg";
+	MenuItemImages[DRAW_ITM_COL_GREEN] = "images\\draw\\colors\\img_green.jpg";
+	MenuItemImages[DRAW_ITM_COL_BLUE] = "images\\draw\\colors\\img_blue.jpg";
 
-	//Draw menu item one image at a time
-	for(int i=0; i<DRAW_ITM_COUNT; i++)
-		pWind->DrawImage(MenuItemImages[i], i*UI.MenuItemWidth, 0, UI.MenuItemWidth, UI.ToolBarHeight);
+	//draw toolbar icons
+	for (int i = 0; i < DRAW_ITM_COUNT; i++)
+	{
+		int x = i * (UI.MenuItemWidth + UI.IconSeperatorWidth) + UI.IconPadding.left; // seperatorwidth for padding purposes and to draw the line seperator
+		pWind->DrawImage(MenuItemImages[i],
+			x,
+			UI.IconPadding.top,
+			UI.MenuItemWidth - UI.IconPadding.right - UI.IconPadding.left,
+			UI.ToolBarHeight - UI.IconPadding.bottom - UI.IconPadding.top);
 
-
+		//draw a black line after icon
+		pWind->SetPen(BLACK, UI.IconSeperatorWidth);
+		pWind->DrawLine(x + UI.MenuItemWidth, 0, x + UI.MenuItemWidth, UI.ToolBarHeight);
+	}
 
 	//Draw a line under the toolbar
 	pWind->SetPen(RED, 3);
-	pWind->DrawLine(0, UI.ToolBarHeight, UI.width, UI.ToolBarHeight);	
+	pWind->DrawLine(0, UI.ToolBarHeight + 1, UI.width, UI.ToolBarHeight + 1); // +1 to account for the extra pixel rendered (line width = 3)
 
 }
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -112,15 +167,55 @@ void Output::ClearDrawArea() const
 	pWind->DrawRectangle(0, UI.ToolBarHeight, UI.width, UI.height - UI.StatusBarHeight);
 	
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////
+// ---   CUSTOM INTERFACE   ---
+/////////////////////////////////////////////////////////////////////////////////////////
+
+void Output::ClearArea(Rect rect) const
+{
+	pWind->SetPen(UI.BkGrndColor, 1);
+	pWind->SetBrush(UI.BkGrndColor);
+	pWind->DrawRectangle(rect.x, rect.y, rect.w, rect.h);
+}
+
+void Output::DrawImage(Rect rect, string path)
+{
+	pWind->DrawImage(path, rect.x, rect.y, rect.w, rect.h);
+}
+
+void Output::DrawRect(Rect rect, Color c)
+{
+	color col = color(c.r * 255, c.g * 255, c.b * 255);
+	pWind->SetPen(col, 1);
+	pWind->SetBrush(col);
+	pWind->DrawRectangle(rect.x, rect.y, rect.x + rect.w, rect.y + rect.h);
+}
+
+void Output::DrawLine(Vector2 p1, Vector2 p2, int w, Color c)
+{
+	color col = color(c.r * 255, c.g * 255, c.b * 255);
+	pWind->SetPen(col, w);
+	pWind->DrawLine(p1.x, p1.y, p2.x, p2.y);
+}
+
+void Output::DrawString(Rect rect, string msg, int fontSz)
+{
+	pWind->SetPen(UI.MsgColor, 50);
+	pWind->SetFont(fontSz, BOLD, BY_NAME, "Arial");
+	pWind->DrawString(rect.x, rect.y, msg);
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////
 
 void Output::PrintMessage(string msg) const	//Prints a message on status bar
 {
 	ClearStatusBar();	//First clear the status bar
 	
+	int fontSz = 20;
 	pWind->SetPen(UI.MsgColor, 50);
-	pWind->SetFont(20, BOLD , BY_NAME, "Arial");   
-	pWind->DrawString(10, UI.height - (int)(UI.StatusBarHeight/1.5), msg);
+	pWind->SetFont(fontSz, BOLD , BY_NAME, "Arial");   
+	pWind->DrawString(10, UI.height - UI.StatusBarHeight + fontSz * 0.5f, msg);
 }
 //////////////////////////////////////////////////////////////////////////////////////////
 
@@ -139,92 +234,73 @@ int Output::getCrntPenWidth() const		//get current pen width
 //								Figures Drawing Functions								//
 //======================================================================================//
 
-void Output::DrawRect(Point P1, Point P2, GfxInfo RectGfxInfo, bool selected) const
+void Output::DrawRectangle(Point topLeft, Point botRight, bool selected) const
 {
-	color DrawingClr;
-	if(selected)	
-		DrawingClr = UI.HighlightColor; //Figure should be drawn highlighted
-	else			
-		DrawingClr = RectGfxInfo.DrawClr;
+	//prepare figure and get drawstyle
+	drawstyle style = PrepareFigureRendering(selected);
 	
-	pWind->SetPen(DrawingClr,1);
-	drawstyle style;
-	if (RectGfxInfo.isFilled)	
-	{
-		style = FILLED;		
-		pWind->SetBrush(RectGfxInfo.FillClr);
-	}
-	else	
-		style = FRAME;
-
-	
-	pWind->DrawRectangle(P1.x, P1.y, P2.x, P2.y, style);
-	
-}
-void Output::DrawSquare(Point P1, Point P2, Point P3, Point P4, GfxInfo Squaregfxinfo, bool selected) const
-{
-	color DrawingClr;
-	if (selected)
-		DrawingClr = UI.HighlightColor;
-	else
-		DrawingClr = Squaregfxinfo.DrawClr;
-	pWind->SetPen(DrawingClr, 1);
-	drawstyle style;
-	if (Squaregfxinfo.isFilled)
-	{
-		style = FILLED;
-		pWind->SetBrush(Squaregfxinfo.FillClr);
-	}
-	else
-	{
-		style = FRAME;
-	}
-	int X[4] = { P1.x,P2.x,P3.x,P4.x };
-	int Y[4] = { P1.y,P2.y,P3.y,P4.y };
-	pWind->DrawPolygon(X, Y, 4, style);
-}
-void Output::DrawTri(Point P1, Point P2, Point P3, GfxInfo TriGfxInfo, bool selected) const
-{
-	color DrawingClr;
-	if (selected)
-		DrawingClr = UI.HighlightColor;
-	else
-		DrawingClr = TriGfxInfo.DrawClr;
-	pWind->SetPen(DrawingClr, 1);
-	drawstyle style;
-	if (TriGfxInfo.isFilled)
-	{
-		style = FILLED;
-		pWind->SetBrush(TriGfxInfo.FillClr);
-	}
-	else
-	{
-		style = FRAME;
-	}
-	pWind->DrawTriangle(P1.x, P1.y, P2.x, P2.y, P3.x, P3.y, style);
+	pWind->DrawRectangle(topLeft.x, topLeft.y, botRight.x, botRight.y, style);
 }
 
-void Output::DrawCirc(Point P1, Point P2, GfxInfo CircGfxInfo, bool selected) const
+void Output::DrawSquare(Point center, bool selected) const
 {
-	color DrawingClr;
-	if (selected)
-		DrawingClr = UI.HighlightColor;
-	else
-		DrawingClr = CircGfxInfo.DrawClr;
-	pWind->SetPen(DrawingClr, 1);
-	drawstyle style;
-	if (CircGfxInfo.isFilled)
-	{
-		style = FILLED;
-		pWind->SetBrush(CircGfxInfo.FillClr);
-	}
-	else
-	{
-		style = FRAME;
-	}
-	int radius = (((P2.x) ^ 2 - (P1.x) ^ 2) + ((P2.y) ^ 2 - (P1.y) ^ 2));
-	pWind->DrawCircle(P1.x, P1.y, radius, style);
+	//prepare figure and get drawstyle
+	GfxInfo* gfxInfo;
+	drawstyle style = PrepareFigureRendering(selected, &gfxInfo);
 
+	//get corner points
+	Point topLeft{ center.x - gfxInfo->fixed_radius, center.y - gfxInfo->fixed_radius };
+	Point topRight{ center.x + gfxInfo->fixed_radius, center.y - gfxInfo->fixed_radius };
+	Point botLeft{ center.x - gfxInfo->fixed_radius, center.y + gfxInfo->fixed_radius };
+	Point botRight{ center.x + gfxInfo->fixed_radius, center.y + gfxInfo->fixed_radius };
+
+	int x[4] = { topLeft.x, topRight.x, botRight.x, botLeft.x };
+	int y[4] = { topLeft.y, topRight.y, botRight.y, botLeft.y };
+	pWind->DrawPolygon(x, y, 4, style);
+}
+
+void Output::DrawTriangle(Point v1, Point v2, Point v3, bool selected) const
+{
+	//prepare figure and get drawstyle
+	drawstyle style = PrepareFigureRendering(selected);
+
+	int x[3] = { v1.x, v2.x, v3.x };
+	int y[3] = { v1.y, v2.y, v3.y };
+	pWind->DrawPolygon(x, y, 3, style);
+}
+
+void Output::DrawHexagon(Point center, bool selected) const
+{
+	//prepare figure and get drawstyle
+	GfxInfo* gfxInfo;
+	drawstyle style = PrepareFigureRendering(selected, &gfxInfo);
+
+	//draw it as a circle with 6 segments
+	float _2pi = 2 * M_PI;
+	float adv = _2pi / 6.0f;
+
+	int x[6];
+	int y[6];
+
+	int idx = 0;
+	for (float theta = adv; theta < _2pi; theta += adv)
+	{
+		x[idx] = center.x + cosf(theta) * gfxInfo->fixed_radius;
+		y[idx] = center.y - sinf(theta) * gfxInfo->fixed_radius;
+		idx++;
+	}
+
+	pWind->DrawPolygon(x, y, 6, style);
+}
+
+void Output::DrawCircle(Point center, Point radiusPoint, bool selected) const
+{
+	//prepare figure and get drawstyle
+	drawstyle style = PrepareFigureRendering(selected);
+
+	//calculate distance between the 2 points
+	int radius = (int)sqrtf(powf(center.x - radiusPoint.x, 2.0f) + powf(center.y - radiusPoint.y, 2.0f));
+	pWind->DrawCircle(center.x, center.y, radius, style);
 }
 
 
