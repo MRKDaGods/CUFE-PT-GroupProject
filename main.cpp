@@ -10,6 +10,8 @@ Application* pApp = 0;
 //Entrypoint
 int main() 
 {
+	//TODO: Only invalidate regions that need to be redrawn rather than the whole buffer
+	// due to latency
 	//declare app
 	pApp = new Application;
 
