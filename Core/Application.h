@@ -42,9 +42,6 @@ private:
 	//Returns an action data from type, null if not found
 	ActionData* GetActionDataFromType(ActionType type);
 
-	//Terminates the app
-	void Exit();
-
 public:
 	Application();
 	~Application();
@@ -72,4 +69,10 @@ public:
 
 	//Returns a pointer to Output
 	Output* GetOutput();
+
+	//Handles an action of ActionType type
+	void HandleAction(const ActionType& type);
+
+	//Terminates the app
+	void Exit();
 };

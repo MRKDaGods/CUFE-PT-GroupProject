@@ -42,15 +42,15 @@ Output::Output(void* app)
 	//Initialize user interface parameters
 	UI.InterfaceMode = MODE_DRAW;
 
-	UI.width = 1250;
-	UI.height = 650;
+	UI.width = 1700;
+	UI.height = 700;
 	UI.wx = 5;
 	UI.wy = 5;
 
 
 	UI.StatusBarHeight = 50;
 	UI.ToolBarHeight = 50;
-	UI.MenuItemWidth = 80;
+	UI.MenuItemWidth = 65;
 
 	UI.DrawColor = BLUE;	//Drawing color
 	UI.FillColor = GREEN;	//Filling color
@@ -62,7 +62,7 @@ Output::Output(void* app)
 
 	//padding
 	UI.IconPadding = {
-		1, 1, 1, 1
+		0,0,0,0
 	};
 
 	//seperator width
@@ -184,12 +184,12 @@ void Output::DrawImage(Rect rect, string path)
 	pWind->DrawImage(path, rect.x, rect.y, rect.w, rect.h);
 }
 
-void Output::DrawRect(Rect rect, Color c)
+void Output::DrawRect(Rect rect, Color c, bool filled, int width)
 {
 	color col = color(c.r * 255, c.g * 255, c.b * 255);
-	pWind->SetPen(col, 1);
+	pWind->SetPen(col, width);
 	pWind->SetBrush(col);
-	pWind->DrawRectangle(rect.x, rect.y, rect.x + rect.w, rect.y + rect.h);
+	pWind->DrawRectangle(rect.x, rect.y, rect.x + rect.w, rect.y + rect.h, filled ? FILLED : FRAME);
 }
 
 void Output::DrawLine(Vector2 p1, Vector2 p2, int w, Color c)

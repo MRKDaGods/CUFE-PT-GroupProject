@@ -11,10 +11,12 @@ private:
 	std::string m_Texture;
 	bool m_Down;
 	std::function<void()> m_Callback;
+	bool m_Selected;
 
 public:
 	UIImageButton(UIWidget* parent, UIAnchor anchor, Rect rect, std::string texture);
 	virtual void Draw() override;
 	virtual bool HandleTouchEvent(UITouchEvent* evt) override;
 	void SetCallback(std::function<void()> cb);
+	void SetSelected(bool selected, bool notify = true);
 };

@@ -53,6 +53,7 @@ class UIWidget
 protected:
     Vector2 m_Position;
     Vector2 m_Size;
+    bool m_Visible;
     bool m_Focused;
     std::vector<UIWidget*> m_Children;
 
@@ -78,7 +79,9 @@ public:
     void UpdateFocusState(bool focused, bool withChildren = true);
     virtual bool HandleTouchEvent(UITouchEvent* evt);
     virtual void Draw();
+    void SetVisible(bool visible, bool invokeDirty = true);
     Vector2 Position();
+    bool Visible();
     bool DontHandleTouch();
     void SetDontHandleTouch(bool val);
     Rect ScreenRect();

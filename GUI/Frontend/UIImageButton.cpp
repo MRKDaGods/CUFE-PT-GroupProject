@@ -5,6 +5,7 @@
 UIImageButton::UIImageButton(UIWidget* parent, UIAnchor anchor, Rect rect, std::string texture) : UIWidget(parent, anchor, rect, UIWidgetType::Button)
 {
 	m_Texture = texture;
+	m_Selected = false;
 }
 
 void UIImageButton::Draw()
@@ -13,7 +14,15 @@ void UIImageButton::Draw()
 
 	//render sprite manually for now
 	//maybe add a sprite child later?
-	GetApplication()->GetOutput()->DrawImage(ScreenRect(), m_Texture);
+
+	Output* output = GetApplication()->GetOutput();
+
+	output->DrawImage(ScreenRect(), m_Texture);
+
+	if (m_Selected)
+	{
+		output->DrawRect(ScreenRect(), Color(255, 0, 0, 255), false, 4);
+	}
 
 	UIWidget::Draw();
 }
@@ -40,4 +49,14 @@ bool UIImageButton::HandleTouchEvent(UITouchEvent* evt)
 void UIImageButton::SetCallback(std::function<void()> cb)
 {
 	m_Callback = cb;
+}
+
+void UIImageButton::SetSelected(bool selected, bool notify)
+{
+	m_Selected = selected;
+
+	if (notify)
+	{
+		Invalidate();
+	}
 }

@@ -52,7 +52,8 @@ bool UIDisplay::HandleTouchEvent(UITouchEvent* evt)
 			m_Down = false;
 		}
 
-		m_DownWidget->HandleTouchEvent(evt);
+		if (m_DownWidget)
+			m_DownWidget->HandleTouchEvent(evt);
 	}
 
 	if (evt->Type == UITouchEventType::Up)

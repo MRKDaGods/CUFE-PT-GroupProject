@@ -5,11 +5,13 @@
 #include <sstream>
 
 std::map<ActionType, ActionData*> actionDataTable {
-	{ ACTION_DRAW_RECTANGLE, action_draw_rectangle },
-	{ ACTION_DRAW_SQUARE, action_draw_square },
-	{ ACTION_DRAW_TRIANGLE, action_draw_triangle },
-	{ ACTION_DRAW_HEXAGON, action_draw_hexagon },
-	{ ACTION_DRAW_CIRCLE, action_draw_circle },
+	{ ACTION_DRAW_SHAPE_RECTANGLE, action_draw_shape_rectangle },
+	{ ACTION_DRAW_SHAPE_SQUARE, action_draw_shape_square },
+	{ ACTION_DRAW_SHAPE_TRIANGLE, action_draw_shape_triangle },
+	{ ACTION_DRAW_SHAPE_HEXAGON, action_draw_shape_hexagon },
+	{ ACTION_DRAW_SHAPE_CIRCLE, action_draw_shape_circle },
+
+	{ ACTION_DRAW_OTHER_EXIT, action_draw_other_exit },
 };
 
 void Application::Print(string msg) const
@@ -19,7 +21,7 @@ void Application::Print(string msg) const
 
 bool Application::IsDrawModeAction(const ActionType& action) const
 {
-	return action > ACTION_DRAW_BEGIN && action < ACTION_DRAW_END;
+	return action > ACTION_DRAW_SHAPE_BEGIN && action < ACTION_DRAW_SHAPE_END;
 }
 
 void Application::HandleDrawModeAction(const ActionType& type)
@@ -191,4 +193,19 @@ void Application::DebugLog(function<void(DEBUG_LOG_PARAM)> log)
 Output* Application::GetOutput()
 {
 	return m_Output;
+}
+
+void Application::HandleAction(const ActionType& type)
+{
+	DebugLog("Handling action...");
+
+	//find action data from type
+	ActionData* data = GetActionDataFromType(type);
+	if (data)
+	{
+		//data found, invoke callback and set status bar message
+		Print(data->status_bar_msg);
+
+		data->callback(this, m_Input, m_Output);
+	}
 }

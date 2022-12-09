@@ -175,7 +175,7 @@
     <ClCompile Include="GUI\Frontend\UIWidget.cpp" />
     <ClCompile Include="GUI\Frontend\UIDisplay.cpp" />
     <ClCompile Include="GUI\Frontend\UISprite.cpp" />
-    <ClCompile Include="GUI\Frontend\UIShapeList.cpp" />
+    <ClCompile Include="GUI\Frontend\UIButtonList.cpp" />
     <ClCompile Include="GUI\Frontend\UIImageButton.cpp" />
     <ClCompile Include="GUI\Frontend\UIWindow.cpp" />
     <ClCompile Include="GUI\Frontend\UILineRenderer.cpp" />
@@ -215,7 +215,7 @@
     <ClInclude Include="GUI\Frontend\UIWidget.h" />
     <ClInclude Include="GUI\Frontend\UIDisplay.h" />
     <ClInclude Include="GUI\Frontend\UISprite.h" />
-    <ClInclude Include="GUI\Frontend\UIShapeList.h" />
+    <ClInclude Include="GUI\Frontend\UIButtonList.h" />
     <ClInclude Include="GUI\Frontend\UIImageButton.h" />
     <ClInclude Include="GUI\Frontend\UIWindow.h" />
     <ClInclude Include="GUI\Frontend\UILineRenderer.h" />

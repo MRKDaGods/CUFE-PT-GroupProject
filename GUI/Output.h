@@ -38,7 +38,7 @@ public:
 	void DrawImage(Rect rect, string path);
 
 	//Draws a filled rect
-	void DrawRect(Rect rect, Color color);
+	void DrawRect(Rect rect, Color color, bool filled = true, int width = 1);
 
 	void DrawLine(Vector2 p1, Vector2 p2, int w, Color color);
 

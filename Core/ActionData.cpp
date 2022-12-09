@@ -1,17 +1,19 @@
 #include "ActionData.h"
+#include "Application.h"
 
 //macro for draw shape message
 #define MESSAGE_DRAW_SHAPE(name) "Action: Draw a " #name ", Click anywhere"
+#define MESSAGE_OTHER(name) "Action: " #name
 
 //Implement actions
 
 //Draw mode actions
-ActionData* action_draw_rectangle = new ActionData {
-	ACTION_DRAW_RECTANGLE,
+ActionData* action_draw_shape_rectangle = new ActionData {
+	ACTION_DRAW_SHAPE_RECTANGLE,
 	MESSAGE_DRAW_SHAPE(RECTANGLE),
 
 	//action callback
-	[](void* app, Input* in, Output* out) 
+	[](Application* app, Input* in, Output* out) 
 	{
 		Point topLeft, botRight;
 
@@ -26,12 +28,12 @@ ActionData* action_draw_rectangle = new ActionData {
 	}
 };
 
-ActionData* action_draw_square = new ActionData{
-	ACTION_DRAW_SQUARE,
+ActionData* action_draw_shape_square = new ActionData{
+	ACTION_DRAW_SHAPE_SQUARE,
 	MESSAGE_DRAW_SHAPE(SQUARE),
 
 	//action callback
-	[](void* app, Input* in, Output* out)
+	[](Application* app, Input* in, Output* out)
 	{
 		Point center;
 
@@ -43,12 +45,12 @@ ActionData* action_draw_square = new ActionData{
 	}
 };
 
-ActionData* action_draw_triangle = new ActionData{
-	ACTION_DRAW_TRIANGLE,
+ActionData* action_draw_shape_triangle = new ActionData{
+	ACTION_DRAW_SHAPE_TRIANGLE,
 	MESSAGE_DRAW_SHAPE(TRIANGLE),
 
 	//action callback
-	[](void* app, Input* in, Output* out)
+	[](Application* app, Input* in, Output* out)
 	{
 		Point v1, v2, v3;
 
@@ -62,12 +64,12 @@ ActionData* action_draw_triangle = new ActionData{
 	}
 };
 
-ActionData* action_draw_hexagon = new ActionData{
-	ACTION_DRAW_HEXAGON,
+ActionData* action_draw_shape_hexagon = new ActionData{
+	ACTION_DRAW_SHAPE_HEXAGON,
 	MESSAGE_DRAW_SHAPE(HEXAGON),
 
 	//action callback
-	[](void* app, Input* in, Output* out)
+	[](Application* app, Input* in, Output* out)
 	{
 		Point center;
 
@@ -79,12 +81,12 @@ ActionData* action_draw_hexagon = new ActionData{
 	}
 };
 
-ActionData* action_draw_circle = new ActionData{
-	ACTION_DRAW_CIRCLE,
+ActionData* action_draw_shape_circle = new ActionData{
+	ACTION_DRAW_SHAPE_CIRCLE,
 	MESSAGE_DRAW_SHAPE(CIRCLE),
 
 	//action callback
-	[](void* app, Input* in, Output* out)
+	[](Application* app, Input* in, Output* out)
 	{
 		Point center, radiusPoint;
 
@@ -96,5 +98,21 @@ ActionData* action_draw_circle = new ActionData{
 
 		//draw circle
 		out->DrawCircle(center, radiusPoint);
+	}
+};
+
+
+//////////////////////////////////////////////
+//Other actions
+//////////////////////////////////////////////
+
+ActionData* action_draw_other_exit = new ActionData{
+	ACTION_DRAW_OTHER_EXIT,
+	MESSAGE_OTHER(EXIT),
+
+	//action callback
+	[](Application* app, Input* in, Output* out)
+	{
+		app->Exit();
 	}
 };

@@ -8,6 +8,7 @@ UIWidget::UIWidget(UIWidget* parent, UIAnchor anchor, Rect rect, UIWidgetType ty
 	m_Anchor = anchor;
 	m_Focused = false;
 	m_Type = type;
+	m_Visible = true;
 	m_DontHandleTouch = false;
 
 	if (parent)
@@ -45,7 +46,7 @@ UIWidget* UIWidget::FindWidget(Vector2 pos)
 	for (auto rv = m_Children.rbegin(); rv != m_Children.rend(); rv++)
 	{
 		UIWidget* widget = *rv;
-		if (widget->DontHandleTouch())
+		if (!widget->Visible() || widget->DontHandleTouch())
 			continue;
 
 		if (widget->ScreenRect().Contains(pos))
@@ -86,10 +87,31 @@ bool UIWidget::HandleTouchEvent(UITouchEvent* evt)
 
 void UIWidget::Draw()
 {
+	if (!m_Visible)
+		return;
+
 	//render all widgets in the subtree
 	for (UIWidget*& widget : m_Children)
 	{
-		widget->Draw();
+		if (widget->Visible())
+		{
+			widget->Draw();
+		}
+	}
+}
+
+void UIWidget::SetVisible(bool visible, bool invokeDirty)
+{
+	m_Visible = visible;
+
+	for (UIWidget*& widget : m_Children)
+	{
+		widget->SetVisible(visible, false);
+	}
+
+	if (invokeDirty)
+	{
+		Invalidate();
 	}
 }
 
@@ -101,6 +123,11 @@ Vector2 UIWidget::Position()
 	}
 
 	return m_Position;
+}
+
+bool UIWidget::Visible()
+{
+	return m_Visible;
 }
 
 bool UIWidget::DontHandleTouch()

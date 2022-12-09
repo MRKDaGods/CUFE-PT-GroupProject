@@ -49,7 +49,9 @@ bool Input::GetMouseDown()
 //This function reads the position where the user clicks to determine the desired action
 ActionType Input::GetUserAction() const
 {	
-	int x,y;
+	return ACTION_DRAW_COLMODE_BEGIN;
+
+	/*int x, y;
 	pWind->WaitMouseClick(x, y);	//Get the coordinates of the user click
 
 	if (UI.InterfaceMode == MODE_DRAW)	//GUI in the DRAW mode
@@ -63,13 +65,13 @@ ActionType Input::GetUserAction() const
 			//Divide x coord of the point clicked by the menu item width (int division)
 			//if division result is 0 ==> first item is clicked, if 1 ==> 2nd item and so on
 
-			switch (ClickedItemOrder)
+			/*switch (ClickedItemOrder)
 			{
-			case DRAW_ITM_RECT: return ACTION_DRAW_RECTANGLE;
-			case DRAW_ITM_SQUARE: return ACTION_DRAW_SQUARE;
-			case DRAW_ITM_TRIANGLE: return ACTION_DRAW_TRIANGLE;
-			case DRAW_ITM_HEXAGON: return ACTION_DRAW_HEXAGON;
-			case DRAW_ITM_CIRCLE: return ACTION_DRAW_CIRCLE;
+			case DRAW_ITM_RECT: return ACTION_DRAW_SHAPE_RECTANGLE;
+			case DRAW_ITM_SQUARE: return ACTION_DRAW_SHAPE_SQUARE;
+			case DRAW_ITM_TRIANGLE: return ACTION_DRAW_SHAPE_TRIANGLE;
+			case DRAW_ITM_HEXAGON: return ACTION_DRAW_SHAPE_HEXAGON;
+			case DRAW_ITM_CIRCLE: return ACTION_DRAW_SHAPE_CIRCLE;
 			case DRAW_ITM_SELECT: return ACTION_DRAW_SELECT;
 			case DRAW_ITM_COL_BLACK: return ACTION_DRAW_COL_BLACK;
 			case DRAW_ITM_COL_YELLOW: return ACTION_DRAW_COL_YELLOW;
@@ -113,7 +115,7 @@ ActionType Input::GetUserAction() const
 		//perform checks similar to Draw mode checks above
 		//and return the correspoding action
 		return TO_PLAY;	//just for now. This should be updated
-	}	
+	}	*/
 
 }
 /////////////////////////////////
