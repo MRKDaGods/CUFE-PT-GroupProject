@@ -2,10 +2,11 @@
 #include "UISprite.h"
 #include "../../Core/Application.h"
 
-UIImageButton::UIImageButton(UIWidget* parent, UIAnchor anchor, Rect rect, std::string texture) : UIWidget(parent, anchor, rect, UIWidgetType::Button)
+UIImageButton::UIImageButton(UIWidget* parent, UIAnchor anchor, Rect rect, std::string texture, Color selColor) : UIWidget(parent, anchor, rect, UIWidgetType::Button)
 {
 	m_Texture = texture;
 	m_Selected = false;
+	m_SelectedColor = selColor;
 }
 
 void UIImageButton::Draw()
@@ -21,7 +22,7 @@ void UIImageButton::Draw()
 
 	if (m_Selected)
 	{
-		output->DrawRect(ScreenRect(), Color(255, 0, 0, 255), false, 4);
+		output->DrawRect(ScreenRect(), m_SelectedColor, false, 4);
 	}
 
 	UIWidget::Draw();

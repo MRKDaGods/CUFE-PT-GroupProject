@@ -19,6 +19,30 @@ void UIFrontend::CreateToolBar()
 	//render toolbar
 	m_Toolbar = new UIWindow(m_Display, UIAnchor::None, Rect(0, 0, UI.width, UI.ToolBarHeight), Color(100, 100, 100, 255), false);
 
+	//render line below toolbar
+	new UILineRenderer(m_Toolbar, UIAnchor::Bottom, Rect(0, -1, UI.width, 0), 3, Color(255, 0, 0, 255));
+
+	//build draw mode toolbar
+	BuildDrawModeToolBar();
+
+	//build play mode toolbar
+	BuildPlayModeToolBar();
+
+	//set to draw mode by default
+	SetCurrentMode(false, false);
+}
+
+void UIFrontend::CreateStatusBar()
+{
+	//render status bar
+	color c = UI.StatusBarColor;
+	m_StatusBar = new UIWindow(m_Display, UIAnchor::Bottom, Rect(0, UI.StatusBarHeight, UI.width, UI.StatusBarHeight), Color(c.ucRed, c.ucGreen, c.ucBlue, 255), false);
+
+	m_StatusBarLabel = new UILabel(m_StatusBar, UIAnchor::BottomLeft, Rect(10, UI.StatusBarHeight, UI.width - 10, UI.StatusBarHeight), 20, "");
+}
+
+void UIFrontend::BuildDrawModeToolBar()
+{
 	//shapes textures
 	std::string shapeTextures[DWSHAPE_COUNT];
 	shapeTextures[DWSHAPE_RECTANGLE] = "images\\draw\\shapes\\img_rect.jpg";
@@ -44,12 +68,10 @@ void UIFrontend::CreateToolBar()
 		true,
 		DWSHAPE_COUNT,
 		shapeTextures,
-		shapeActions);
+		shapeActions,
+		Color(255, 0, 0, 255));
 
 	dx += m_ShapeList->ScreenRect().w + TOOLBAR_SPACING; //increment dx with shapelist's width + 5 px padding
-
-	//render line below toolbar
-	new UILineRenderer(m_Toolbar, UIAnchor::Bottom, Rect(0, -1, UI.width, 0), 3, Color(255, 0, 0, 255));
 
 	//color palette
 	std::string colorTextures[DWCOLOR_COUNT];
@@ -73,7 +95,8 @@ void UIFrontend::CreateToolBar()
 		true,
 		DWCOLOR_COUNT,
 		colorTextures,
-		colorActions);
+		colorActions,
+		Color(255, 255, 255, 255));
 
 	dx += m_ColorPalette->ScreenRect().w + TOOLBAR_SPACING; //increment dx with color pallete's width + 5 px padding
 
@@ -95,13 +118,15 @@ void UIFrontend::CreateToolBar()
 		true,
 		DWCOLORMODE_COUNT,
 		colorModeTextures,
-		colorModeActions);
+		colorModeActions,
+		Color(255, 0, 0, 255));
 
 	dx += m_ColorPrefList->ScreenRect().w + TOOLBAR_SPACING;
 
 	//other actions
 	std::string otherTextures[DWOTHER_COUNT];
 	otherTextures[DWOTHER_SELECT] = "images\\draw\\other\\img_select.jpg";
+	otherTextures[DWOTHER_MOVE] = "images\\draw\\other\\img_move.jpg";
 	otherTextures[DWOTHER_DELETE_FIG] = "images\\draw\\other\\img_delete_fig.jpg";
 	otherTextures[DWOTHER_CLEAR_ALL] = "images\\draw\\other\\img_clear_all.jpg";
 	otherTextures[DWOTHER_SAVE_GRAPH] = "images\\draw\\other\\img_save.jpg";
@@ -121,22 +146,79 @@ void UIFrontend::CreateToolBar()
 	}
 
 	//render other actions
-	m_ColorPrefList = new UIButtonList(m_Toolbar,
+	m_OtherActionsList = new UIButtonList(m_Toolbar,
 		UIAnchor::None,
 		Rect(dx, 0, UI.MenuItemWidth * DWOTHER_COUNT, UI.ToolBarHeight),
 		false,
 		DWOTHER_COUNT,
 		otherTextures,
-		otherActions);
+		otherActions,
+		Color(255, 0, 0, 255));
 }
 
-void UIFrontend::CreateStatusBar()
+void UIFrontend::BuildPlayModeToolBar()
 {
-	//render status bar
-	color c = UI.StatusBarColor;
-	m_StatusBar = new UIWindow(m_Display, UIAnchor::Bottom, Rect(0, UI.StatusBarHeight, UI.width, UI.StatusBarHeight), Color(c.ucRed, c.ucGreen, c.ucBlue, 255), false);
+	//pick hide textures
+	std::string phTextures[PMPICKHIDE_COUNT];
+	phTextures[PMPICKHIDE_FIG_TYPE] = "images\\play\\img_figtype.jpg";
+	phTextures[PMPICKHIDE_FIG_COL] = "images\\play\\img_figcol.jpg";
+	phTextures[PMPICKHIDE_FIG_TYPE_COL] = "images\\play\\img_figtypecol.jpg";
 
-	m_StatusBarLabel = new UILabel(m_StatusBar, UIAnchor::BottomLeft, Rect(10, UI.StatusBarHeight, UI.width - 10, UI.StatusBarHeight), 20, "");
+	ActionType phActions[PMPICKHIDE_COUNT];
+	for (ActionType type = ActionType(ACTION_PLAY_PICKHIDE_BEGIN + 1); type < ACTION_PLAY_PICKHIDE_END; type = ActionType(type + 1))
+	{
+		phActions[type - ACTION_PLAY_PICKHIDE_BEGIN - 1] = type;
+	}
+
+	//delta x position
+	int dx = 0;
+
+	//render shape list
+	m_PickHideList = new UIButtonList(
+		m_Toolbar,
+		UIAnchor::None,
+		Rect(dx, 0, UI.MenuItemWidth * PMPICKHIDE_COUNT, UI.ToolBarHeight),
+		true,
+		PMPICKHIDE_COUNT,
+		phTextures,
+		phActions,
+		Color(0, 0, 255, 255));
+
+	dx += m_PickHideList->ScreenRect().w + TOOLBAR_SPACING;
+
+	//other textures
+	std::string otherTextures[PMOTHER_COUNT];
+	otherTextures[PMOTHER_DRAW] = "images\\play\\img_draw.jpg";
+
+	ActionType otherActions[PMOTHER_COUNT];
+	for (ActionType type = ActionType(ACTION_PLAY_OTHER_BEGIN + 1); type < ACTION_PLAY_OTHER_END; type = ActionType(type + 1))
+	{
+		otherActions[type - ACTION_PLAY_OTHER_BEGIN - 1] = type;
+	}
+
+	m_PlayOtherList = new UIButtonList(
+		m_Toolbar,
+		UIAnchor::None,
+		Rect(dx, 0, UI.MenuItemWidth * PMPICKHIDE_COUNT, UI.ToolBarHeight),
+		false,
+		PMOTHER_COUNT,
+		otherTextures,
+		otherActions,
+		Color(0, 0, 255, 255));
+}
+
+void UIFrontend::SetDrawModeState(bool enable)
+{
+	m_ShapeList->SetVisible(enable, false);
+	m_ColorPalette->SetVisible(enable, false);
+	m_ColorPrefList->SetVisible(enable, false);
+	m_OtherActionsList->SetVisible(enable, false);
+}
+
+void UIFrontend::SetPlayModeState(bool enable)
+{
+	m_PickHideList->SetVisible(enable, false);
+	m_PlayOtherList->SetVisible(enable, false);
 }
 
 UIFrontend::~UIFrontend()
@@ -157,4 +239,17 @@ void UIFrontend::SetStatusBarText(string txt)
 void UIFrontend::HandleTouchEvent(UITouchEvent* evt)
 {
 	m_Display->HandleTouchEvent(evt);
+}
+
+void UIFrontend::SetCurrentMode(bool isPlayMode, bool notify)
+{
+	//update mode states
+	SetDrawModeState(!isPlayMode);
+	SetPlayModeState(isPlayMode);
+
+	//redraw
+	if (notify)
+	{
+		m_Display->Draw();
+	}
 }

@@ -4,6 +4,7 @@
 #include <functional>
 
 #include "UIWidget.h"
+#include "../../Utils/Color.h"
 
 class UIImageButton : public UIWidget
 {
@@ -12,9 +13,10 @@ private:
 	bool m_Down;
 	std::function<void()> m_Callback;
 	bool m_Selected;
+	Color m_SelectedColor;
 
 public:
-	UIImageButton(UIWidget* parent, UIAnchor anchor, Rect rect, std::string texture);
+	UIImageButton(UIWidget* parent, UIAnchor anchor, Rect rect, std::string texture, Color selColor);
 	virtual void Draw() override;
 	virtual bool HandleTouchEvent(UITouchEvent* evt) override;
 	void SetCallback(std::function<void()> cb);

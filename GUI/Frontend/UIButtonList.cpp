@@ -19,7 +19,7 @@ void UIButtonList::UpdateSelectedButton(int idx)
 	m_Buttons[m_SelectedButton]->SetSelected(true);
 }
 
-UIButtonList::UIButtonList(UIWidget* parent, UIAnchor anchor, Rect rect, bool selectable, int count, std::string* shapeTextures, ActionType* actions)
+UIButtonList::UIButtonList(UIWidget* parent, UIAnchor anchor, Rect rect, bool selectable, int count, std::string* shapeTextures, ActionType* actions, Color selectColor)
 	: UIWidget(parent, anchor, rect, UIWidgetType::ShapeList)
 {
 	//initialize selected shape to none
@@ -37,7 +37,7 @@ UIButtonList::UIButtonList(UIWidget* parent, UIAnchor anchor, Rect rect, bool se
 				UI.IconPadding.top,
 				UI.MenuItemWidth - UI.IconPadding.right /*- UI.IconPadding.left */,
 				UI.ToolBarHeight - UI.IconPadding.bottom - UI.IconPadding.top
-			), shapeTextures[i]);
+			), shapeTextures[i], selectColor);
 
 		ActionType currentAction = actions[i];
 		button->SetCallback(

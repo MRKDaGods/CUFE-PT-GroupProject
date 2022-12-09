@@ -42,7 +42,7 @@ Output::Output(void* app)
 	//Initialize user interface parameters
 	UI.InterfaceMode = MODE_DRAW;
 
-	UI.width = 1700;
+	UI.width = 1775;
 	UI.height = 700;
 	UI.wx = 5;
 	UI.wy = 5;

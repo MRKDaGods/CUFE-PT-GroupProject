@@ -14,7 +14,7 @@ private:
 	void UpdateSelectedButton(int idx);
 
 public:
-	UIButtonList(UIWidget* parent, UIAnchor anchor, Rect rect, bool selectable, int count, std::string* shapeTextures, ActionType* actions);
+	UIButtonList(UIWidget* parent, UIAnchor anchor, Rect rect, bool selectable, int count, std::string* shapeTextures, ActionType* actions, Color selectColor);
 	virtual void Draw() override;
 };
 

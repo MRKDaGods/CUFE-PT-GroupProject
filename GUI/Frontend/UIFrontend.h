@@ -21,8 +21,18 @@ private:
 	UIButtonList* m_ColorPrefList; // Fill/Draw
 	UIButtonList* m_OtherActionsList;
 
+	//Play mode components
+	UIButtonList* m_PickHideList;
+	UIButtonList* m_PlayOtherList;
+
 	void CreateToolBar();
 	void CreateStatusBar();
+
+	void BuildDrawModeToolBar();
+	void BuildPlayModeToolBar();
+
+	void SetDrawModeState(bool enable);
+	void SetPlayModeState(bool enable);
 
 public:
 	UIFrontend();
@@ -35,4 +45,7 @@ public:
 	void SetStatusBarText(string txt);
 
 	void HandleTouchEvent(UITouchEvent* evt);
+
+	//Sets the current mode, false = DrawMode, true = PlayMode
+	void SetCurrentMode(bool isPlayMode, bool notify = true);
 };

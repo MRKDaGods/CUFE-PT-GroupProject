@@ -46,6 +46,7 @@ enum ActionType //The actions supported (you can add more if needed)
 	ACTION_DRAW_OTHER_BEGIN, //mark draw mode other beginnning
 
 	ACTION_DRAW_OTHER_SELECT,
+	ACTION_DRAW_OTHER_MOVE,
 	ACTION_DRAW_OTHER_DELETE_FIG,
 	ACTION_DRAW_OTHER_CLEAR_ALL,
 	ACTION_DRAW_OTHER_SAVE_GRAPH,
@@ -59,6 +60,25 @@ enum ActionType //The actions supported (you can add more if needed)
 	ACTION_DRAW_OTHER_EXIT,
 
 	ACTION_DRAW_OTHER_END,
+
+	//////////////////////////////////////////////////////////////////
+
+	ACTION_PLAY_PICKHIDE_BEGIN, //mark play mode pick hide beginnning
+
+	ACTION_PLAY_PICKHIDE_FIGTYPE,
+	ACTION_PLAY_PICKHIDE_FIGCOL,
+	ACTION_PLAY_PICKHIDE_FIGTYPE_COL,
+
+	ACTION_PLAY_PICKHIDE_END,
+
+	//////////////////////////////////////////////////////////////////
+
+	//switch to draw mode
+	ACTION_PLAY_OTHER_BEGIN,
+
+	ACTION_PLAY_OTHER_DRAW,
+
+	ACTION_PLAY_OTHER_END,
 
 	//////////////////////////////////////////////////////////////////
 };
@@ -123,6 +143,7 @@ enum DWColorModes
 enum DWOtherActions
 {
 	DWOTHER_SELECT,
+	DWOTHER_MOVE,
 	DWOTHER_DELETE_FIG,
 	DWOTHER_CLEAR_ALL,
 	DWOTHER_SAVE_GRAPH,
@@ -136,6 +157,22 @@ enum DWOtherActions
 	DWOTHER_EXIT,
 
 	DWOTHER_COUNT
+};
+
+enum PMPickHide
+{
+	PMPICKHIDE_FIG_TYPE,
+	PMPICKHIDE_FIG_COL,
+	PMPICKHIDE_FIG_TYPE_COL,
+
+	PMPICKHIDE_COUNT
+};
+
+enum PMOtherAction
+{
+	PMOTHER_DRAW,
+
+	PMOTHER_COUNT
 };
 
 #endif

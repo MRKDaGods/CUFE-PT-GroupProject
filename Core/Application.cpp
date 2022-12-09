@@ -5,13 +5,55 @@
 #include <sstream>
 
 std::map<ActionType, ActionData*> actionDataTable {
+	//////////////////////////////////////////////
+	//Shape actions
+	//////////////////////////////////////////////
 	{ ACTION_DRAW_SHAPE_RECTANGLE, action_draw_shape_rectangle },
 	{ ACTION_DRAW_SHAPE_SQUARE, action_draw_shape_square },
 	{ ACTION_DRAW_SHAPE_TRIANGLE, action_draw_shape_triangle },
 	{ ACTION_DRAW_SHAPE_HEXAGON, action_draw_shape_hexagon },
 	{ ACTION_DRAW_SHAPE_CIRCLE, action_draw_shape_circle },
 
+	//////////////////////////////////////////////
+	//Color actions
+	//////////////////////////////////////////////
+	{ ACTION_DRAW_COL_BLACK, action_draw_col_black },
+	{ ACTION_DRAW_COL_YELLOW, action_draw_col_yellow },
+	{ ACTION_DRAW_COL_ORANGE, action_draw_col_orange },
+	{ ACTION_DRAW_COL_RED, action_draw_col_red },
+	{ ACTION_DRAW_COL_GREEN, action_draw_col_green },
+	{ ACTION_DRAW_COL_BLUE, action_draw_col_blue },
+
+	//////////////////////////////////////////////
+	//ColorMode actions
+	//////////////////////////////////////////////
+	{ ACTION_DRAW_COLMODE_FILL, action_draw_colmode_fill },
+	{ ACTION_DRAW_COLMODE_DRAW, action_draw_colmode_draw },
+
+	//////////////////////////////////////////////
+	//Other actions
+	//////////////////////////////////////////////
+	{ ACTION_DRAW_OTHER_SELECT, action_draw_other_select },
+	{ ACTION_DRAW_OTHER_MOVE, action_draw_other_move },
+	{ ACTION_DRAW_OTHER_DELETE_FIG, action_draw_other_delete_fig },
+	{ ACTION_DRAW_OTHER_CLEAR_ALL, action_draw_other_clear_all },
+	{ ACTION_DRAW_OTHER_SAVE_GRAPH, action_draw_other_save_graph },
+	{ ACTION_DRAW_OTHER_OPEN_GRAPH, action_draw_other_open_graph },
+	{ ACTION_DRAW_OTHER_REC_START, action_draw_other_rec_start },
+	{ ACTION_DRAW_OTHER_REC_STOP, action_draw_other_rec_stop },
+	{ ACTION_DRAW_OTHER_REC_PAUSE, action_draw_other_rec_pause },
+	{ ACTION_DRAW_OTHER_UNDO, action_draw_other_undo },
+	{ ACTION_DRAW_OTHER_REDO, action_draw_other_redo },
+	{ ACTION_DRAW_OTHER_PLAY, action_draw_other_play },
 	{ ACTION_DRAW_OTHER_EXIT, action_draw_other_exit },
+
+	//////////////////////////////////////////////
+	//Play mode actions
+	//////////////////////////////////////////////
+	{ ACTION_PLAY_PICKHIDE_FIGTYPE, action_play_pickhide_figtype },
+	{ ACTION_PLAY_PICKHIDE_FIGCOL, action_play_pickhide_figcol },
+	{ ACTION_PLAY_PICKHIDE_FIGTYPE_COL, action_play_pickhide_figtype_col },
+	{ ACTION_PLAY_OTHER_DRAW, action_play_other_draw }
 };
 
 void Application::Print(string msg) const
@@ -52,11 +94,76 @@ void Application::Exit()
 	m_IsRunning = false;
 }
 
+DWColorModes Application::GetCurrentColorMode()
+{
+	return m_CurrentColorMode;
+}
+
+void Application::SetCurrentColorMode(DWColorModes colMode)
+{
+	m_CurrentColorMode = colMode;
+}
+
+void Application::SetDrawModeColor(DWColors col)
+{
+	color c;
+	switch (col)
+	{
+	case DWCOLOR_BLACK:
+		c = BLACK;
+		break;
+
+	case DWCOLOR_YELLOW:
+		c = YELLOW;
+		break;
+
+	case DWCOLOR_ORANGE:
+		c = ORANGE;
+		break;
+
+	case DWCOLOR_RED:
+		c = RED;
+		break;
+
+	case DWCOLOR_GREEN:
+		c = GREEN;
+		break;
+
+	case DWCOLOR_BLUE:
+		c = BLUE;
+		break;
+
+	case DWCOLOR_COUNT:
+		break;
+	}
+
+	switch (m_CurrentColorMode)
+	{
+	case DWCOLORMODE_FILL:
+		m_GfxInfo.fill_col = c;
+		break;
+
+	case DWCOLORMODE_DRAW:
+		m_GfxInfo.draw_col = c;
+		break;
+
+	case DWCOLORMODE_COUNT:
+		break;
+	}
+}
+
+void Application::SetCurrentMode(bool isPlayMode)
+{
+	m_Frontend->SetCurrentMode(isPlayMode);
+}
+
 Application::Application()
 {
 	//create IO
 	m_Output = new Output(this);
 	m_Input = m_Output->CreateInput();
+
+	SetCurrentColorMode(DWCOLORMODE_DRAW);
 
 	//set running
 	m_IsRunning = true;
@@ -173,12 +280,14 @@ GfxInfo* Application::GetGfxInfo()
 
 void Application::DebugLog(string msg, bool appendNewLine)
 {
+#ifdef ENABLE_DEBUG_LOG
 	cout << "[DEBUG] " << msg;
 
 	if (appendNewLine)
 	{
 		cout << endl;
 	}
+#endif
 }
 
 void Application::DebugLog(function<void(DEBUG_LOG_PARAM)> log)

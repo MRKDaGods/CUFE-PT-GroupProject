@@ -6,6 +6,7 @@
 #include "../GUI/Output.h"
 #include "../GUI/Input.h"
 #include "ActionData.h"
+#include "../Common.h"
 
 #define DEBUG_LOG_PARAM std::stringstream& stream
 
@@ -29,6 +30,9 @@ private:
 
 	bool m_MouseDown;
 	Point m_LastMousePosition;
+
+	//The current color mode
+	DWColorModes m_CurrentColorMode;
 
 	//Prints a message to the status bar
 	void Print(string msg) const;
@@ -75,4 +79,13 @@ public:
 
 	//Terminates the app
 	void Exit();
+
+	DWColorModes GetCurrentColorMode();
+	void SetCurrentColorMode(DWColorModes colMode);
+
+	//Sets the current color with respect to the selected color mode (fill/draw)
+	void SetDrawModeColor(DWColors color);
+
+	//Sets the current mode, false = DrawMode, true = PlayMode
+	void SetCurrentMode(bool isPlayMode);
 };
