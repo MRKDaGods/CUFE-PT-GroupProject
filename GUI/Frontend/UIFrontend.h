@@ -13,6 +13,7 @@ private:
 	//Core components
 	UIWindow* m_Toolbar;
 	UIWindow* m_StatusBar;
+	UIWindow* m_DrawingArea;
 	UILabel* m_StatusBarLabel;
 
 	//Draw mode components

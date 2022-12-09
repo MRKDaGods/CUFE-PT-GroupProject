@@ -7,4 +7,4 @@
 #define TARGET_FPS 90
 
 //uncomment for console debug logs
-#define ENABLE_DEBUG_LOG
+//#define ENABLE_DEBUG_LOG

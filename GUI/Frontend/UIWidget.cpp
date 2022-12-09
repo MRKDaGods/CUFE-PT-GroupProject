@@ -78,8 +78,7 @@ bool UIWidget::HandleTouchEvent(UITouchEvent* evt)
 	UIWidget* widget = FindWidget(evt->MousePosition);
 	if (widget)
 	{
-		widget->HandleTouchEvent(evt);
-		return true;
+		return widget->HandleTouchEvent(evt);
 	}
 
 	return false;

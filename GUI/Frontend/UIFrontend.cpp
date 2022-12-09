@@ -2,6 +2,7 @@
 #include "UISprite.h"
 #include "UILineRenderer.h"
 #include "../UI_Info.h"
+#include "../../Core/Application.h"
 
 #define TOOLBAR_SPACING 15
 
@@ -17,16 +18,35 @@ UIFrontend::UIFrontend()
 void UIFrontend::CreateToolBar()
 {
 	//render toolbar
-	m_Toolbar = new UIWindow(m_Display, UIAnchor::None, Rect(0, 0, UI.width, UI.ToolBarHeight), Color(100, 100, 100, 255), false);
-
-	//render line below toolbar
-	new UILineRenderer(m_Toolbar, UIAnchor::Bottom, Rect(0, -1, UI.width, 0), 3, Color(255, 0, 0, 255));
+	m_Toolbar = new UIWindow(
+		m_Display,
+		UIAnchor::None,
+		Rect(0, 0, UI.width, UI.ToolBarHeight),
+		Color(100, 100, 100, 255),
+		false,
+		[]() {
+			GetApplication()->GetOutput()->PrintMessage("Clicked on Empty Area on ToolBar");
+		});
 
 	//build draw mode toolbar
 	BuildDrawModeToolBar();
 
 	//build play mode toolbar
 	BuildPlayModeToolBar();
+
+	//create drawing area
+	m_DrawingArea = new UIWindow(
+		m_Display,
+		UIAnchor::None,
+		Rect(0, UI.ToolBarHeight + 3, UI.width, UI.height - UI.ToolBarHeight - UI.StatusBarHeight - 3),
+		Color(UI.BkGrndColor.ucRed, UI.BkGrndColor.ucGreen, UI.BkGrndColor.ucBlue, 255),
+		false,
+		[]() {
+			GetApplication()->GetOutput()->PrintMessage("Clicked on Drawing Area");
+		});
+
+	//render line below toolbar
+	new UILineRenderer(m_Toolbar, UIAnchor::Bottom, Rect(0, -1, UI.width, 0), 3, Color(255, 0, 0, 255));
 
 	//set to draw mode by default
 	SetCurrentMode(false, false);
@@ -36,9 +56,22 @@ void UIFrontend::CreateStatusBar()
 {
 	//render status bar
 	color c = UI.StatusBarColor;
-	m_StatusBar = new UIWindow(m_Display, UIAnchor::Bottom, Rect(0, UI.StatusBarHeight, UI.width, UI.StatusBarHeight), Color(c.ucRed, c.ucGreen, c.ucBlue, 255), false);
+	m_StatusBar = new UIWindow(
+		m_Display,
+		UIAnchor::Bottom,
+		Rect(0, UI.StatusBarHeight, UI.width, UI.StatusBarHeight),
+		Color(c.ucRed, c.ucGreen, c.ucBlue, 255),
+		false,
+		[]() {
+			GetApplication()->GetOutput()->PrintMessage("Clicked on StatusBar");
+		});
 
-	m_StatusBarLabel = new UILabel(m_StatusBar, UIAnchor::BottomLeft, Rect(10, UI.StatusBarHeight, UI.width - 10, UI.StatusBarHeight), 20, "");
+	m_StatusBarLabel = new UILabel(
+		m_StatusBar,
+		UIAnchor::BottomLeft,
+		Rect(10, UI.StatusBarHeight, UI.width - 10, UI.StatusBarHeight),
+		20,
+		"");
 }
 
 void UIFrontend::BuildDrawModeToolBar()

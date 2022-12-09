@@ -74,6 +74,9 @@ public:
 	//Returns a pointer to Output
 	Output* GetOutput();
 
+	//Returns a pointer to Input
+	Input* GetInput();
+
 	//Handles an action of ActionType type
 	void HandleAction(const ActionType& type);
 

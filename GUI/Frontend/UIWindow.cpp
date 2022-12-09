@@ -11,12 +11,13 @@ T clamp(T x, T min, T max)
     return x;
 }
 
-UIWindow::UIWindow(UIWidget* parent, UIAnchor anchor, Rect rect, Color color, bool draggable)
+UIWindow::UIWindow(UIWidget* parent, UIAnchor anchor, Rect rect, Color color, bool draggable, std::function<void()> onDown)
 	: UIWidget(parent, anchor, rect, UIWidgetType::Window)
 {
     m_Drag = false;
     m_Color = color;
 	m_Draggable = draggable;
+    m_OnDown = onDown;
 }
 
 bool UIWindow::HandleTouchEvent(UITouchEvent* evt)
@@ -33,6 +34,12 @@ bool UIWindow::HandleTouchEvent(UITouchEvent* evt)
         }
 
         evt->Consume(); //H
+
+        //call onDown if not null
+        if (m_OnDown)
+        {
+            m_OnDown();
+        }
 
         break;
 

@@ -304,6 +304,11 @@ Output* Application::GetOutput()
 	return m_Output;
 }
 
+Input* Application::GetInput()
+{
+	return m_Input;
+}
+
 void Application::HandleAction(const ActionType& type)
 {
 	DebugLog("Handling action...");
