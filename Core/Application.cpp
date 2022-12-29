@@ -1,8 +1,41 @@
 #include "Application.h"
 
+#include "Actions/Shapes/ActionAddRectangle.h"
+#include "Actions/Shapes/ActionAddSquare.h"
+#include "Actions/Other/ActionExit.h"
+#include "Actions/Colors/ActionSetColor.h"
+
 #include <map>
 #include <iostream>
 #include <sstream>
+
+//Action function pointer
+#define _ACT_FNPTR(actClass) [](Application* app) -> Action* { return new actClass(app); }
+#define _ACT_FNPTR_COL(col) [](Application* app) -> Action* { return new ActionSetColor(app, col); }
+
+//ActionType to function pointer that returns a new instance of the action
+std::map<ActionType, ActionInstantiator> actionDataTable2 {
+	//////////////////////////////////////////////
+	//Shape actions
+	//////////////////////////////////////////////
+	{ ACTION_DRAW_SHAPE_RECTANGLE, _ACT_FNPTR(ActionAddRectangle) },
+	{ ACTION_DRAW_SHAPE_SQUARE, _ACT_FNPTR(ActionAddSquare) },
+
+	//////////////////////////////////////////////
+	//Color actions
+	//////////////////////////////////////////////
+	{ ACTION_DRAW_COL_BLACK, _ACT_FNPTR_COL(DWCOLOR_BLACK) },
+	{ ACTION_DRAW_COL_YELLOW, _ACT_FNPTR_COL(DWCOLOR_YELLOW) },
+	{ ACTION_DRAW_COL_ORANGE, _ACT_FNPTR_COL(DWCOLOR_ORANGE) },
+	{ ACTION_DRAW_COL_RED, _ACT_FNPTR_COL(DWCOLOR_RED) },
+	{ ACTION_DRAW_COL_GREEN, _ACT_FNPTR_COL(DWCOLOR_GREEN) },
+	{ ACTION_DRAW_COL_BLUE, _ACT_FNPTR_COL(DWCOLOR_BLUE) },
+
+	//////////////////////////////////////////////
+	//Other actions
+	//////////////////////////////////////////////
+	{ ACTION_DRAW_OTHER_EXIT, _ACT_FNPTR(ActionExit) }
+};
 
 std::map<ActionType, ActionData*> actionDataTable {
 	//////////////////////////////////////////////
@@ -61,30 +94,10 @@ void Application::Print(string msg) const
 	m_Frontend->SetStatusBarText(msg);
 }
 
-bool Application::IsDrawModeAction(const ActionType& action) const
+ActionInstantiator Application::GetActionInstantiatorFromType(const ActionType& type)
 {
-	return action > ACTION_DRAW_SHAPE_BEGIN && action < ACTION_DRAW_SHAPE_END;
-}
-
-void Application::HandleDrawModeAction(const ActionType& type)
-{
-	DebugLog("Handling draw mode action...");
-
-	//find action data from type
-	ActionData* data = GetActionDataFromType(type);
-	if (data)
-	{
-		//data found, invoke callback and set status bar message
-		Print(data->status_bar_msg);
-
-		data->callback(this, m_Input, m_Output);
-	}
-}
-
-ActionData* Application::GetActionDataFromType(ActionType type)
-{
-	auto it = actionDataTable.find(type);
-	return it != actionDataTable.end() ? it->second : 0;
+	auto it = actionDataTable2.find(type);
+	return it != actionDataTable2.end() ? it->second : 0;
 }
 
 Application::Application()
@@ -98,11 +111,20 @@ Application::Application()
 	//set running
 	m_IsRunning = true;
 
+	//add the initial gfx info to the stack
+	m_GfxStack.push(GfxInfo());
+
 	//set initial gfx info
 	SetGfxInfo();
 
 	//create frontend
 	m_Frontend = new UIFrontend;
+
+	//initialize figure count
+	m_FigureCount = 0;
+
+	//zero out the figure pointers
+	memset(m_FigureList, 0, sizeof(CFigure*) * MAX_FIGURE_COUNT);
 }
 
 Application::~Application()
@@ -204,16 +226,27 @@ void Application::Loop()
 void Application::SetGfxInfo(color drawColor, int borderWidth, bool fill, color fillColor, int fixedRadius)
 {
 	//set graphic info
-	m_GfxInfo.draw_col = drawColor;
-	m_GfxInfo.border_width = borderWidth;
-	m_GfxInfo.is_filled = fill;
-	m_GfxInfo.fill_col = fillColor;
-	m_GfxInfo.fixed_radius = fixedRadius;
+	GfxInfo* gfx = GetGfxInfo();
+	gfx->draw_col = drawColor;
+	gfx->border_width = borderWidth;
+	gfx->is_filled = fill;
+	gfx->fill_col = fillColor;
+	gfx->fixed_radius = fixedRadius;
 }
 
 GfxInfo* Application::GetGfxInfo()
 {
-	return &m_GfxInfo;
+	return &m_GfxStack.top();
+}
+
+void Application::PushGfxInfo(const GfxInfo& gfxInfo)
+{
+	m_GfxStack.push(gfxInfo);
+}
+
+void Application::PopGfxInfo()
+{
+	m_GfxStack.pop();
 }
 
 void Application::DebugLog(string msg, bool appendNewLine)
@@ -256,14 +289,15 @@ void Application::HandleAction(const ActionType& type)
 {
 	DebugLog("Handling action...");
 
-	//find action data from type
-	ActionData* data = GetActionDataFromType(type);
-	if (data)
+	//find action instantiator from type
+	ActionInstantiator instantiator = GetActionInstantiatorFromType(type);
+	if (instantiator)
 	{
-		//data found, invoke callback and set status bar message
-		Print(data->status_bar_msg);
+		//call instantiator and create action
+		auto action = instantiator(this);
 
-		data->callback(this, m_Input, m_Output);
+		//execute action
+		action->Execute();
 	}
 }
 
@@ -320,11 +354,11 @@ void Application::SetDrawModeColor(DWColors col)
 	switch (m_CurrentColorMode)
 	{
 	case DWCOLORMODE_FILL:
-		m_GfxInfo.fill_col = c;
+		GetGfxInfo()->fill_col = c;
 		break;
 
 	case DWCOLORMODE_DRAW:
-		m_GfxInfo.draw_col = c;
+		GetGfxInfo()->draw_col = c;
 		break;
 
 	case DWCOLORMODE_COUNT:
@@ -339,9 +373,11 @@ void Application::SetCurrentMode(bool isPlayMode)
 
 void Application::AddFigure(CFigure* pFig)
 {
-	if (m_FigureCount < MAX_FIG_COUNT) 
+	if (m_FigureCount < MAX_FIGURE_COUNT) 
 	{
 		m_FigureList[m_FigureCount++] = pFig;
+
+		Render();
 	}
 }
 

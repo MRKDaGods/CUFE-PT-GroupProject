@@ -1,16 +1,20 @@
 #pragma once
 
 #include <functional>
+#include <stack>
 
 #include "../GUI/Frontend/UIFrontend.h"
 #include "../GUI/Output.h"
 #include "../GUI/Input.h"
-#include "ActionData.h"
 #include "../Common.h"
 #include "../Figures/CFigure.h"
+#include "Actions/Action.h"
+#include "ActionData.h"
 
 #define DEBUG_LOG_PARAM std::stringstream& stream
-#define MAX_FIG_COUNT 200
+#define MAX_FIGURE_COUNT 200
+
+typedef Action*(*ActionInstantiator)(Application*);
 
 class Application
 {
@@ -25,7 +29,7 @@ private:
 	bool m_IsRunning;
 
 	//Figure graphical information
-	GfxInfo m_GfxInfo;
+	std::stack<GfxInfo> m_GfxStack;
 
 	//The interface frontend, responsible for top level rendering
 	UIFrontend* m_Frontend;
@@ -39,8 +43,8 @@ private:
 	//Actual number of figures
 	int m_FigureCount;
 
-	//List of all figures (Array of pointers)
-	CFigure* m_FigureList[MAX_FIG_COUNT];
+	//List of all figures
+	CFigure* m_FigureList[MAX_FIGURE_COUNT];
 
 	//Pointer to the selected figure
 	CFigure* m_SelectedFigure;
@@ -48,14 +52,8 @@ private:
 	//Prints a message to the status bar
 	void Print(string msg) const;
 
-	//Determines whether the given action is a draw mode action or not
-	bool IsDrawModeAction(const ActionType& action) const;
-
-	//Handles an action related to draw mode
-	void HandleDrawModeAction(const ActionType& action);
-
-	//Returns an action data from type, null if not found
-	ActionData* GetActionDataFromType(ActionType type);
+	//Returns an action instantiator from type, null if not found
+	ActionInstantiator GetActionInstantiatorFromType(const ActionType& type);
 
 public:
 	Application();
@@ -73,8 +71,12 @@ public:
 	//Sets the graphical info to use
 	void SetGfxInfo(color drawColor = BLACK, int borderWidth = 5, bool fill = false, color fillColor = BLACK, int fixedRadius = 50);
 
-	//Returns the gfx info
+	//Returns the gfx info at the top of the stack
 	GfxInfo* GetGfxInfo();
+
+	void PushGfxInfo(const GfxInfo& gfxInfo);
+
+	void PopGfxInfo();
 
 	//Logs a debug message to the console
 	void DebugLog(string msg, bool appendNewLine = true);

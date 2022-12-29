@@ -153,8 +153,12 @@
     <ClCompile Include="GUI\Frontend\UILabel.cpp" />
     <ClCompile Include="Figures\CFigure.cpp" />
     <ClCompile Include="Figures\CRectangle.cpp" />
-    <ClCompile Include="Core\Actions\Shapes\AddRectangleAction.cpp" />
+    <ClCompile Include="Core\Actions\Shapes\ActionAddRectangle.cpp" />
     <ClCompile Include="Core\Actions\Action.cpp" />
+    <ClCompile Include="Core\Actions\Other\ActionExit.cpp" />
+    <ClCompile Include="Core\Actions\Colors\ActionSetColor.cpp" />
+    <ClCompile Include="Core\Actions\Shapes\ActionAddSquare.cpp" />
+    <ClCompile Include="Figures\CSquare.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CMUgraphicsLib\auxil.h">
@@ -250,6 +254,10 @@
     <ClInclude Include="Figures\CFigure.h" />
     <ClInclude Include="Figures\CRectangle.h" />
     <ClInclude Include="Core\Actions\Action.h" />
-    <ClInclude Include="Core\Actions\Shapes\AddRectangleAction.h" />
+    <ClInclude Include="Core\Actions\Shapes\ActionAddRectangle.h" />
+    <ClInclude Include="Core\Actions\Other\ActionExit.h" />
+    <ClInclude Include="Core\Actions\Colors\ActionSetColor.h" />
+    <ClInclude Include="Core\Actions\Shapes\ActionAddSquare.h" />
+    <ClInclude Include="Figures\CSquare.h" />
   </ItemGroup>
 </Project>

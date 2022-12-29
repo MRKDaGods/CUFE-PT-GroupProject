@@ -3,21 +3,18 @@
 #include "../Action.h"
 #include "../../../DEFS.h"
 
-//Add Rectangle Action class
-class AddRectangleAction : public Action
+//Add Square Action class
+class ActionAddSquare : public Action
 {
 private:
-	//Rectangle Corners
-	Point m_P1;
-	Point m_P2;
+	Point m_Center;
 
 public:
-	AddRectangleAction(Application* app);
+	ActionAddSquare(Application* app);
 
 	//Reads rectangle parameters
 	virtual void ReadActionParameters() override;
 
 	//Add rectangle to the ApplicationManager
 	virtual void Execute() override;
-
 };

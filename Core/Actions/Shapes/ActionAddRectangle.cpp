@@ -1,13 +1,13 @@
-#include "AddRectangleAction.h"
+#include "ActionAddRectangle.h"
 #include "../../Application.h"
 #include "../../../Figures/CRectangle.h"
 
-AddRectangleAction::AddRectangleAction(Application* app) : Action(app)
+ActionAddRectangle::ActionAddRectangle(Application* app) : Action(app)
 {
 	m_P1 = m_P2 = Point();
 }
 
-void AddRectangleAction::ReadActionParameters()
+void ActionAddRectangle::ReadActionParameters()
 {
 	m_Frontend->SetStatusBarText("New Rectangle: Click at first corner");
 
@@ -24,7 +24,7 @@ void AddRectangleAction::ReadActionParameters()
 }
 
 //Execute the action
-void AddRectangleAction::Execute()
+void ActionAddRectangle::Execute()
 {
 	//read params
 	ReadActionParameters();
