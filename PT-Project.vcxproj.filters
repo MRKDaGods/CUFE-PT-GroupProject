@@ -151,6 +151,10 @@
     <ClCompile Include="GUI\Frontend\UIWindow.cpp" />
     <ClCompile Include="GUI\Frontend\UILineRenderer.cpp" />
     <ClCompile Include="GUI\Frontend\UILabel.cpp" />
+    <ClCompile Include="Figures\CFigure.cpp" />
+    <ClCompile Include="Figures\CRectangle.cpp" />
+    <ClCompile Include="Core\Actions\Shapes\AddRectangleAction.cpp" />
+    <ClCompile Include="Core\Actions\Action.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CMUgraphicsLib\auxil.h">
@@ -243,5 +247,9 @@
     <ClInclude Include="Utils\Color.h" />
     <ClInclude Include="GUI\Frontend\UILineRenderer.h" />
     <ClInclude Include="GUI\Frontend\UILabel.h" />
+    <ClInclude Include="Figures\CFigure.h" />
+    <ClInclude Include="Figures\CRectangle.h" />
+    <ClInclude Include="Core\Actions\Action.h" />
+    <ClInclude Include="Core\Actions\Shapes\AddRectangleAction.h" />
   </ItemGroup>
 </Project>

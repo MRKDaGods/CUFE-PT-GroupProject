@@ -7,8 +7,10 @@
 #include "../GUI/Input.h"
 #include "ActionData.h"
 #include "../Common.h"
+#include "../Figures/CFigure.h"
 
 #define DEBUG_LOG_PARAM std::stringstream& stream
+#define MAX_FIG_COUNT 200
 
 class Application
 {
@@ -33,6 +35,15 @@ private:
 
 	//The current color mode
 	DWColorModes m_CurrentColorMode;
+
+	//Actual number of figures
+	int m_FigureCount;
+
+	//List of all figures (Array of pointers)
+	CFigure* m_FigureList[MAX_FIG_COUNT];
+
+	//Pointer to the selected figure
+	CFigure* m_SelectedFigure;
 
 	//Prints a message to the status bar
 	void Print(string msg) const;
@@ -77,6 +88,9 @@ public:
 	//Returns a pointer to Input
 	Input* GetInput();
 
+	//Returns a pointer to UIFrontend
+	UIFrontend* GetUIFrontend();
+
 	//Handles an action of ActionType type
 	void HandleAction(const ActionType& type);
 
@@ -91,4 +105,10 @@ public:
 
 	//Sets the current mode, false = DrawMode, true = PlayMode
 	void SetCurrentMode(bool isPlayMode);
+
+	//Adds a new figure to the FigList
+	void AddFigure(CFigure* pFig);
+
+	//Search for a figure given a point inside the figure
+	CFigure* GetFigure(int x, int y) const;
 };

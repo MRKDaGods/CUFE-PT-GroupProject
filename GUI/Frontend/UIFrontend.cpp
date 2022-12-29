@@ -35,7 +35,7 @@ void UIFrontend::CreateToolBar()
 	BuildPlayModeToolBar();
 
 	//create drawing area
-	m_DrawingArea = new UIWindow(
+	/*m_DrawingArea = new UIWindow(
 		m_Display,
 		UIAnchor::None,
 		Rect(0, UI.ToolBarHeight + 3, UI.width, UI.height - UI.ToolBarHeight - UI.StatusBarHeight - 3),
@@ -43,7 +43,7 @@ void UIFrontend::CreateToolBar()
 		false,
 		[]() {
 			GetApplication()->GetOutput()->PrintMessage("Clicked on Drawing Area");
-		});
+		});*/
 
 	//render line below toolbar
 	new UILineRenderer(m_Toolbar, UIAnchor::Bottom, Rect(0, -1, UI.width, 0), 3, Color(255, 0, 0, 255));

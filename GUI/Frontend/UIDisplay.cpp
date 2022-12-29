@@ -68,7 +68,8 @@ void UIDisplay::Draw()
 {
 	RenderingDisplay = this;
 
-	ClearArea();
+	//ammar: commented this to prevent flicker
+	//ClearArea();
 
 	//call base draw
 	UIWidget::Draw();

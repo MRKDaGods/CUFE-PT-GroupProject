@@ -15,4 +15,3 @@ public:
 	virtual void Draw() override;
 	void SetText(std::string txt);
 };
-

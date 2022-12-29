@@ -87,76 +87,6 @@ ActionData* Application::GetActionDataFromType(ActionType type)
 	return it != actionDataTable.end() ? it->second : 0;
 }
 
-void Application::Exit()
-{
-	DebugLog("Exiting the app");
-
-	m_IsRunning = false;
-}
-
-DWColorModes Application::GetCurrentColorMode()
-{
-	return m_CurrentColorMode;
-}
-
-void Application::SetCurrentColorMode(DWColorModes colMode)
-{
-	m_CurrentColorMode = colMode;
-}
-
-void Application::SetDrawModeColor(DWColors col)
-{
-	color c;
-	switch (col)
-	{
-	case DWCOLOR_BLACK:
-		c = BLACK;
-		break;
-
-	case DWCOLOR_YELLOW:
-		c = YELLOW;
-		break;
-
-	case DWCOLOR_ORANGE:
-		c = ORANGE;
-		break;
-
-	case DWCOLOR_RED:
-		c = RED;
-		break;
-
-	case DWCOLOR_GREEN:
-		c = GREEN;
-		break;
-
-	case DWCOLOR_BLUE:
-		c = BLUE;
-		break;
-
-	case DWCOLOR_COUNT:
-		break;
-	}
-
-	switch (m_CurrentColorMode)
-	{
-	case DWCOLORMODE_FILL:
-		m_GfxInfo.fill_col = c;
-		break;
-
-	case DWCOLORMODE_DRAW:
-		m_GfxInfo.draw_col = c;
-		break;
-
-	case DWCOLORMODE_COUNT:
-		break;
-	}
-}
-
-void Application::SetCurrentMode(bool isPlayMode)
-{
-	m_Frontend->SetCurrentMode(isPlayMode);
-}
-
 Application::Application()
 {
 	//create IO
@@ -196,6 +126,14 @@ bool Application::IsRunning() const
 void Application::Render()
 {
 	m_Frontend->Render();
+
+	for (int i = 0; i < m_FigureCount; i++)
+	{
+		if (m_FigureList[i])
+		{
+			m_FigureList[i]->Draw(m_Output);
+		}
+	}
 }
 
 void Application::Loop()
@@ -309,6 +247,11 @@ Input* Application::GetInput()
 	return m_Input;
 }
 
+UIFrontend* Application::GetUIFrontend()
+{
+	return m_Frontend;
+}
+
 void Application::HandleAction(const ActionType& type)
 {
 	DebugLog("Handling action...");
@@ -322,4 +265,94 @@ void Application::HandleAction(const ActionType& type)
 
 		data->callback(this, m_Input, m_Output);
 	}
+}
+
+void Application::Exit()
+{
+	DebugLog("Exiting the app");
+
+	m_IsRunning = false;
+}
+
+DWColorModes Application::GetCurrentColorMode()
+{
+	return m_CurrentColorMode;
+}
+
+void Application::SetCurrentColorMode(DWColorModes colMode)
+{
+	m_CurrentColorMode = colMode;
+}
+
+void Application::SetDrawModeColor(DWColors col)
+{
+	color c;
+	switch (col)
+	{
+	case DWCOLOR_BLACK:
+		c = BLACK;
+		break;
+
+	case DWCOLOR_YELLOW:
+		c = YELLOW;
+		break;
+
+	case DWCOLOR_ORANGE:
+		c = ORANGE;
+		break;
+
+	case DWCOLOR_RED:
+		c = RED;
+		break;
+
+	case DWCOLOR_GREEN:
+		c = GREEN;
+		break;
+
+	case DWCOLOR_BLUE:
+		c = BLUE;
+		break;
+
+	case DWCOLOR_COUNT:
+		break;
+	}
+
+	switch (m_CurrentColorMode)
+	{
+	case DWCOLORMODE_FILL:
+		m_GfxInfo.fill_col = c;
+		break;
+
+	case DWCOLORMODE_DRAW:
+		m_GfxInfo.draw_col = c;
+		break;
+
+	case DWCOLORMODE_COUNT:
+		break;
+	}
+}
+
+void Application::SetCurrentMode(bool isPlayMode)
+{
+	m_Frontend->SetCurrentMode(isPlayMode);
+}
+
+void Application::AddFigure(CFigure* pFig)
+{
+	if (m_FigureCount < MAX_FIG_COUNT) 
+	{
+		m_FigureList[m_FigureCount++] = pFig;
+	}
+}
+
+CFigure* Application::GetFigure(int x, int y) const
+{
+	//If a figure is found return a pointer to it.
+	//if this point (x,y) does not belong to any figure return NULL
+
+
+	//Add your code here to search for a figure given a point x,y	
+	//Remember that ApplicationManager only calls functions do NOT implement it.
+
+	return NULL;
 }
