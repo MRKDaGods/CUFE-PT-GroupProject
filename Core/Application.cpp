@@ -1,9 +1,26 @@
 #include "Application.h"
 
+#include "Actions/Colors/ActionSetColor.h"
+#include "Actions/Colors/ActionSetColorMode.h"
+
+#include "Actions/Other/ActionSelect.h"
+#include "Actions/Other/ActionMove.h"
+#include "Actions/Other/ActionDelete.h"
+#include "Actions/Other/ActionSave.h"
+#include "Actions/Other/ActionLoad.h"
+#include "Actions/Other/ActionClearAll.h"
+#include "Actions/Other/ActionUndo.h"
+#include "Actions/Other/ActionRedo.h"
+#include "Actions/Other/ActionExit.h"
+
 #include "Actions/Shapes/ActionAddRectangle.h"
 #include "Actions/Shapes/ActionAddSquare.h"
-#include "Actions/Other/ActionExit.h"
-#include "Actions/Colors/ActionSetColor.h"
+#include "Actions/Shapes/ActionAddTriangle.h"
+#include "Actions/Shapes/ActionAddHexagon.h"
+#include "Actions/Shapes/ActionAddCircle.h"
+
+#include "../Utils/Color.h"
+#include "Serializer.h"
 
 #include <map>
 #include <iostream>
@@ -12,6 +29,7 @@
 //Action function pointer
 #define _ACT_FNPTR(actClass) [](Application* app) -> Action* { return new actClass(app); }
 #define _ACT_FNPTR_COL(col) [](Application* app) -> Action* { return new ActionSetColor(app, col); }
+#define _ACT_FNPTR_COLMODE(mode) [](Application* app) -> Action* { return new ActionSetColorMode(app, mode); }
 
 //ActionType to function pointer that returns a new instance of the action
 std::map<ActionType, ActionInstantiator> actionDataTable2 {
@@ -20,6 +38,9 @@ std::map<ActionType, ActionInstantiator> actionDataTable2 {
 	//////////////////////////////////////////////
 	{ ACTION_DRAW_SHAPE_RECTANGLE, _ACT_FNPTR(ActionAddRectangle) },
 	{ ACTION_DRAW_SHAPE_SQUARE, _ACT_FNPTR(ActionAddSquare) },
+	{ ACTION_DRAW_SHAPE_TRIANGLE, _ACT_FNPTR(ActionAddTriangle) },
+	{ ACTION_DRAW_SHAPE_HEXAGON, _ACT_FNPTR(ActionAddHexagon) },
+	{ ACTION_DRAW_SHAPE_CIRCLE, _ACT_FNPTR(ActionAddCircle) },
 
 	//////////////////////////////////////////////
 	//Color actions
@@ -32,8 +53,22 @@ std::map<ActionType, ActionInstantiator> actionDataTable2 {
 	{ ACTION_DRAW_COL_BLUE, _ACT_FNPTR_COL(DWCOLOR_BLUE) },
 
 	//////////////////////////////////////////////
+	//ColorMode actions
+	//////////////////////////////////////////////
+	{ ACTION_DRAW_COLMODE_FILL, _ACT_FNPTR_COLMODE(DWCOLORMODE_FILL) },
+	{ ACTION_DRAW_COLMODE_DRAW, _ACT_FNPTR_COLMODE(DWCOLORMODE_DRAW) },
+
+	//////////////////////////////////////////////
 	//Other actions
 	//////////////////////////////////////////////
+	{ ACTION_DRAW_OTHER_SELECT, _ACT_FNPTR(ActionSelect) },
+	{ ACTION_DRAW_OTHER_MOVE, _ACT_FNPTR(ActionMove) },
+	{ ACTION_DRAW_OTHER_DELETE_FIG, _ACT_FNPTR(ActionDelete) },
+	{ ACTION_DRAW_OTHER_CLEAR_ALL, _ACT_FNPTR(ActionClearAll) },
+	{ ACTION_DRAW_OTHER_SAVE_GRAPH, _ACT_FNPTR(ActionSave) },
+	{ ACTION_DRAW_OTHER_OPEN_GRAPH, _ACT_FNPTR(ActionLoad) },
+	{ ACTION_DRAW_OTHER_UNDO, _ACT_FNPTR(ActionUndo) },
+	{ ACTION_DRAW_OTHER_REDO, _ACT_FNPTR(ActionRedo) },
 	{ ACTION_DRAW_OTHER_EXIT, _ACT_FNPTR(ActionExit) }
 };
 
@@ -106,6 +141,8 @@ Application::Application()
 	m_Output = new Output(this);
 	m_Input = m_Output->CreateInput();
 
+	//defaults
+	SetCurrentColor(DWCOLOR_BLACK);
 	SetCurrentColorMode(DWCOLORMODE_DRAW);
 
 	//set running
@@ -120,11 +157,17 @@ Application::Application()
 	//create frontend
 	m_Frontend = new UIFrontend;
 
+	//initialize selected figure
+	m_SelectedFigure = 0;
+
 	//initialize figure count
 	m_FigureCount = 0;
 
 	//zero out the figure pointers
 	memset(m_FigureList, 0, sizeof(CFigure*) * MAX_FIGURE_COUNT);
+
+	//initialize action history
+	m_ActionHistory = new ActionHistory(this);
 }
 
 Application::~Application()
@@ -132,6 +175,7 @@ Application::~Application()
 	delete m_Output;
 	delete m_Input;
 	delete m_Frontend;
+	delete m_ActionHistory;
 
 	//delete action data as well
 	for (auto &x : actionDataTable)
@@ -145,9 +189,14 @@ bool Application::IsRunning() const
 	return m_IsRunning;
 }
 
-void Application::Render()
+void Application::Render(bool clearDrawArea)
 {
 	m_Frontend->Render();
+
+	if (clearDrawArea)
+	{
+		m_Output->ClearDrawArea();
+	}
 
 	for (int i = 0; i < m_FigureCount; i++)
 	{
@@ -296,8 +345,38 @@ void Application::HandleAction(const ActionType& type)
 		//call instantiator and create action
 		auto action = instantiator(this);
 
+		//read params externally
+		if (action->CanReadActionParameters())
+		{
+			action->ReadActionParameters();
+		}
+
 		//execute action
 		action->Execute();
+
+		//action history should delete the last executed action incase it was an unsupported one
+		//no memory leaks :)
+		m_ActionHistory->AddAction(action);
+
+		//output action history debug
+		DebugLog(
+			[&](DEBUG_LOG_PARAM) {
+				stream << "ACTIONS: [ ";
+				auto acts = m_ActionHistory->GetHistory();
+				for (int i = 0; i < acts->GetCount(); i++)
+				{
+					stream << (*acts)[i]->GetActionType() << " ";
+				}
+
+				stream << "]\n";
+
+				auto next = acts->PeekNext();
+				if (next != 0)
+				{
+					stream << "NEXT = " << next->GetActionType() << '\n';
+				}
+			}
+		);
 	}
 }
 
@@ -318,52 +397,14 @@ void Application::SetCurrentColorMode(DWColorModes colMode)
 	m_CurrentColorMode = colMode;
 }
 
-void Application::SetDrawModeColor(DWColors col)
+DWColors Application::GetCurrentColor()
 {
-	color c;
-	switch (col)
-	{
-	case DWCOLOR_BLACK:
-		c = BLACK;
-		break;
+	return m_CurrentColor;
+}
 
-	case DWCOLOR_YELLOW:
-		c = YELLOW;
-		break;
-
-	case DWCOLOR_ORANGE:
-		c = ORANGE;
-		break;
-
-	case DWCOLOR_RED:
-		c = RED;
-		break;
-
-	case DWCOLOR_GREEN:
-		c = GREEN;
-		break;
-
-	case DWCOLOR_BLUE:
-		c = BLUE;
-		break;
-
-	case DWCOLOR_COUNT:
-		break;
-	}
-
-	switch (m_CurrentColorMode)
-	{
-	case DWCOLORMODE_FILL:
-		GetGfxInfo()->fill_col = c;
-		break;
-
-	case DWCOLORMODE_DRAW:
-		GetGfxInfo()->draw_col = c;
-		break;
-
-	case DWCOLORMODE_COUNT:
-		break;
-	}
+void Application::SetCurrentColor(DWColors color)
+{
+	m_CurrentColor = color;
 }
 
 void Application::SetCurrentMode(bool isPlayMode)
@@ -371,24 +412,140 @@ void Application::SetCurrentMode(bool isPlayMode)
 	m_Frontend->SetCurrentMode(isPlayMode);
 }
 
-void Application::AddFigure(CFigure* pFig)
+void Application::AddFigure(CFigure* pFig, bool clearDrawArea, bool shouldRender)
 {
 	if (m_FigureCount < MAX_FIGURE_COUNT) 
 	{
 		m_FigureList[m_FigureCount++] = pFig;
 
-		Render();
+		//so by default AddFigure calls Render
+		//should we let the Action class responsible for the dirty handling?
+		if (shouldRender)
+		{
+			Render(clearDrawArea);
+		}
 	}
+}
+
+void Application::DeleteFigure(CFigure* fig, bool deletePtr)
+{
+	//dont continue if fig is null
+	if (fig == 0) return;
+
+	//find fig in fig list, if found, delete it, shift elements then re-render
+
+	int figIdx = -1;
+	for (int i = 0; i < m_FigureCount; i++)
+	{
+		if (m_FigureList[i] == fig)
+		{
+			//we found the figure
+			//delete it
+			if (deletePtr)
+			{
+				delete m_FigureList[i];
+			}
+
+			//zero out the location
+			m_FigureList[i] = 0;
+
+			figIdx = i;
+			break;
+		}
+	}
+
+	if (figIdx == -1) return; //figure not found
+
+	//if the removed figure wasnt the last figure in the array, shift
+	// |||||_|     ->    ||||||_
+	//      ^                  ^
+
+	if (figIdx < m_FigureCount - 1)
+	{
+		//not the last element, so shift to the left
+		for (int i = figIdx + 1; i < m_FigureCount; i++)
+		{
+			m_FigureList[i - 1] = m_FigureList[i];
+		}
+
+		//zero out the location of the last element
+		m_FigureList[m_FigureCount - 1] = 0;
+	}
+
+	//decrement figure count
+	m_FigureCount--;
+}
+
+void Application::DeleteAllFigures()
+{
+	//dont do anything if there are no figures
+	if (m_FigureCount == 0) return;
+
+	for (int i = 0; i < m_FigureCount; i++)
+	{
+		//delete it
+		delete m_FigureList[i];
+
+		//zero out the location
+		m_FigureList[i] = 0;
+	}
+
+	//set figure count to 0
+	m_FigureCount = 0;
 }
 
 CFigure* Application::GetFigure(int x, int y) const
 {
-	//If a figure is found return a pointer to it.
-	//if this point (x,y) does not belong to any figure return NULL
+	//find the first figure that satisfies the hit test
+	for (int i = 0; i < m_FigureCount; i++)
+	{
+		if (m_FigureList[i]->HitTest(Point{ x, y }))
+		{
+			return m_FigureList[i];
+		}
+	}
 
+	return 0;
+}
 
-	//Add your code here to search for a figure given a point x,y	
-	//Remember that ApplicationManager only calls functions do NOT implement it.
+bool Application::ContainsFigure(CFigure* fig)
+{
+	for (int i = 0; i < m_FigureCount; i++)
+	{
+		if (m_FigureList[i] == fig)
+		{
+			return true;
+		}
+	}
 
-	return NULL;
+	return false;
+}
+
+CFigure* Application::GetSelectedFigure()
+{
+	return m_SelectedFigure;
+}
+
+void Application::SetSelectedFigure(CFigure* fig)
+{
+	m_SelectedFigure = fig;
+}
+
+ActionHistory* Application::GetActionHistory()
+{
+	return m_ActionHistory;
+}
+
+int Application::GetFigureCount()
+{
+	return m_FigureCount;
+}
+
+void Application::SaveAll(Serializer* serializer)
+{	 
+	//save all figures
+	for (int i = 0; i < m_FigureCount; i++)
+	{
+		m_FigureList[i]->Save(serializer);
+	}
 }

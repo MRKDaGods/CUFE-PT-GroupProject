@@ -98,7 +98,7 @@ void UIFrontend::BuildDrawModeToolBar()
 		m_Toolbar,
 		UIAnchor::None,
 		Rect(dx, 0, UI.MenuItemWidth * DWSHAPE_COUNT, UI.ToolBarHeight),
-		true,
+		false,
 		DWSHAPE_COUNT,
 		shapeTextures,
 		shapeActions,
@@ -131,6 +131,9 @@ void UIFrontend::BuildDrawModeToolBar()
 		colorActions,
 		Color(255, 255, 255, 255));
 
+	//set black initially selected
+	m_ColorPalette->UpdateSelectedButton(0, false);
+
 	dx += m_ColorPalette->ScreenRect().w + TOOLBAR_SPACING; //increment dx with color pallete's width + 5 px padding
 
 	//color mode
@@ -153,6 +156,9 @@ void UIFrontend::BuildDrawModeToolBar()
 		colorModeTextures,
 		colorModeActions,
 		Color(255, 0, 0, 255));
+
+	//set draw initially selected
+	m_ColorPrefList->UpdateSelectedButton(1, false);
 
 	dx += m_ColorPrefList->ScreenRect().w + TOOLBAR_SPACING;
 
@@ -264,7 +270,7 @@ void UIFrontend::Render()
 	m_Display->Draw();
 }
 
-void UIFrontend::SetStatusBarText(string txt)
+void UIFrontend::SetStatusBarText(string txt) const
 {
 	m_StatusBarLabel->SetText(txt);
 }
@@ -285,4 +291,23 @@ void UIFrontend::SetCurrentMode(bool isPlayMode, bool notify)
 	{
 		m_Display->Draw();
 	}
+}
+
+void UIFrontend::Reset()
+{
+	//reset to initial state
+	m_ColorPalette->UpdateSelectedButton(DWCOLOR_BLACK, false);
+	m_ColorPrefList->UpdateSelectedButton(DWCOLORMODE_DRAW, false);
+
+	//TODO: play mode buttons?
+}
+
+void UIFrontend::SetSelectedColor(DWColors color)
+{
+	m_ColorPalette->UpdateSelectedButton(color);
+}
+
+void UIFrontend::SetSelectedColorMode(DWColorModes mode)
+{
+	m_ColorPrefList->UpdateSelectedButton(mode);
 }

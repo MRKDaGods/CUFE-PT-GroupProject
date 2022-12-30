@@ -15,3 +15,8 @@ void ActionExit::Execute()
 	//exit the app
 	m_Application->Exit();
 }
+
+ActionType ActionExit::GetActionType()
+{
+	return ACTION_DRAW_OTHER_EXIT;
+}

@@ -10,6 +10,7 @@
 #include "../Figures/CFigure.h"
 #include "Actions/Action.h"
 #include "ActionData.h"
+#include "ActionHistory.h"
 
 #define DEBUG_LOG_PARAM std::stringstream& stream
 #define MAX_FIGURE_COUNT 200
@@ -40,6 +41,9 @@ private:
 	//The current color mode
 	DWColorModes m_CurrentColorMode;
 
+	//The current color
+	DWColors m_CurrentColor;
+
 	//Actual number of figures
 	int m_FigureCount;
 
@@ -48,6 +52,9 @@ private:
 
 	//Pointer to the selected figure
 	CFigure* m_SelectedFigure;
+
+	//Handles the action history
+	ActionHistory* m_ActionHistory;
 
 	//Prints a message to the status bar
 	void Print(string msg) const;
@@ -63,7 +70,7 @@ public:
 	bool IsRunning() const;
 
 	//Manually requests the frontend to render
-	void Render();
+	void Render(bool clearDrawArea = false);
 
 	//App main loop
 	void Loop();
@@ -102,15 +109,40 @@ public:
 	DWColorModes GetCurrentColorMode();
 	void SetCurrentColorMode(DWColorModes colMode);
 
-	//Sets the current color with respect to the selected color mode (fill/draw)
-	void SetDrawModeColor(DWColors color);
+	DWColors GetCurrentColor();
+	void SetCurrentColor(DWColors color);
 
 	//Sets the current mode, false = DrawMode, true = PlayMode
 	void SetCurrentMode(bool isPlayMode);
 
 	//Adds a new figure to the FigList
-	void AddFigure(CFigure* pFig);
+	void AddFigure(CFigure* pFig, bool clearDrawArea = false, bool shouldRender = true);
+
+	//Removes a figure if exists
+	//deletePtr if true, the underlying pointer will be deleted
+	void DeleteFigure(CFigure* fig, bool deletePtr = true);
+
+	//Deletes all figures if any
+	void DeleteAllFigures();
 
 	//Search for a figure given a point inside the figure
 	CFigure* GetFigure(int x, int y) const;
+
+	//Returns true if a figure exists
+	bool ContainsFigure(CFigure* fig);
+
+	//Returns a pointer to the currently selected figure
+	CFigure* GetSelectedFigure();
+	
+	//Sets the currently selected figure
+	void SetSelectedFigure(CFigure* fig);
+
+	//Returns the action history
+	ActionHistory* GetActionHistory();
+
+	//Returns the number of figures
+	int GetFigureCount();
+
+	//Saves all figures to serializer
+	void SaveAll(Serializer* serializer);
 };

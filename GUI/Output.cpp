@@ -1,5 +1,6 @@
 #include "Output.h"
 #include "../Core/Application.h"
+#include "../Utils/GeoUtils.h"
 
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -164,8 +165,7 @@ void Output::ClearDrawArea() const
 {
 	pWind->SetPen(UI.BkGrndColor, 1);
 	pWind->SetBrush(UI.BkGrndColor);
-	pWind->DrawRectangle(0, UI.ToolBarHeight, UI.width, UI.height - UI.StatusBarHeight);
-	
+	pWind->DrawRectangle(0, UI.ToolBarHeight + 3, UI.width, UI.height - UI.StatusBarHeight); //ammar: adjusted iY1 because of the toolbar line seperator
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -275,31 +275,26 @@ void Output::DrawHexagon(Point center, bool selected) const
 	GfxInfo* gfxInfo;
 	drawstyle style = PrepareFigureRendering(selected, &gfxInfo);
 
-	//draw it as a circle with 6 segments
-	float _2pi = 2 * M_PI;
-	float adv = _2pi / 6.0f;
-
-	int x[6];
-	int y[6];
-
-	int idx = 0;
-	for (float theta = adv; theta < _2pi; theta += adv)
-	{
-		x[idx] = center.x + cosf(theta) * gfxInfo->fixed_radius;
-		y[idx] = center.y - sinf(theta) * gfxInfo->fixed_radius;
-		idx++;
-	}
+	int* x = 0;
+	int* y = 0;
+	GetSegmentedCirclePoints(center, 6, gfxInfo->fixed_radius, &x, &y);
 
 	pWind->DrawPolygon(x, y, 6, style);
+
+	delete[] x;
+	delete[] y;
 }
 
-void Output::DrawCircle(Point center, Point radiusPoint, bool selected) const
+void Output::DrawCircle(Point center, Point radiusPoint, bool selected, int* outRadius) const
 {
 	//prepare figure and get drawstyle
 	drawstyle style = PrepareFigureRendering(selected);
 
 	//calculate distance between the 2 points
-	int radius = (int)sqrtf(powf(center.x - radiusPoint.x, 2.0f) + powf(center.y - radiusPoint.y, 2.0f));
+	int radius = ((Vector2)center - radiusPoint).Magnitude();
+
+	if (outRadius) *outRadius = radius;
+
 	pWind->DrawCircle(center.x, center.y, radius, style);
 }
 

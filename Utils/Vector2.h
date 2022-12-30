@@ -18,6 +18,13 @@ struct Vector2
 	{
 	}
 
+	float SqrMagnitude()
+	{
+		return x * x + y * y;
+	}
+
+	float Magnitude();
+
 	Vector2 operator+(Vector2 other)
 	{
 		return Vector2(x + other.x, y + other.y);

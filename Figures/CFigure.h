@@ -2,6 +2,10 @@
 
 #include "../DEFS.h"
 #include "../GUI/Output.h"
+#include "../Core/Serializer.h"
+#include "../Core/Deserializer.h"
+
+class UIFrontend;
 
 //Base class for all figures
 class CFigure
@@ -17,21 +21,27 @@ public:
 	void SetSelected(bool s);	//select/unselect the figure
 	bool IsSelected() const;	//check whether fig is selected
 
+	GfxInfo* GetGfxInfo();
+
 	virtual void Draw(Output* pOut) const abstract;		//Draw the figure
 
 	void ChangeDrawColor(color Dclr);	//changes the figure's drawing color
 	void ChangeFillColor(color Fclr);	//changes the figure's filling color
 
-	///The following functions should be supported by the figure class
-	///It should be overridden by each inherited figure
+	virtual bool HitTest(Point hit) abstract;
+	virtual void PrintInfo(const UIFrontend* frontend) const abstract;
 
-	///Decide the parameters that you should pass to each function	
+	//Translates figure constraints by dx and dy
+	virtual void Translate(int dx, int dy) abstract;
 
+	//Returns the absolute position of the figure, could be one of the vertices or just the center
+	virtual Point GetPosition() abstract;
 
-	//virtual void Save(ofstream &OutFile) = 0;	//Save the figure parameters to the file
-	//virtual void Load(ifstream &Infile) = 0;	//Load the figure parameters to the file
+	//Saves the figure
+	virtual void Save(Serializer* serializer) abstract;
 
-	//virtual void PrintInfo(Output* pOut) = 0;	//print all figure info on the status bar
+	//Loads the figure data
+	virtual void Load(Deserializer* deserializer) abstract;
 };
 
 //forward declaration

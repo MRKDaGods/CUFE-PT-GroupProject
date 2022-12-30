@@ -59,7 +59,7 @@ public:
 	void DrawHexagon(Point center, bool selected = false) const;
 
 	//Draw a circle from given center and a point on the circumference
-	void DrawCircle(Point center, Point radiusPoint, bool selected = false) const;
+	void DrawCircle(Point center, Point radiusPoint, bool selected = false, int* outRadius = 0) const;
 	
 	//Print a message on Status bar
 	void PrintMessage(string msg) const;

@@ -5,13 +5,14 @@
 ActionAddRectangle::ActionAddRectangle(Application* app) : Action(app)
 {
 	m_P1 = m_P2 = Point();
+
+	m_Rectangle = 0;
 }
 
 void ActionAddRectangle::ReadActionParameters()
 {
-	m_Frontend->SetStatusBarText("New Rectangle: Click at first corner");
-
 	//get first point
+	m_Frontend->SetStatusBarText("New Rectangle: Click at first corner");
 	m_Input->GetPointClicked(m_P1.x, m_P1.y);
 
 	m_Frontend->SetStatusBarText("New Rectangle: Click at second corner");
@@ -23,16 +24,23 @@ void ActionAddRectangle::ReadActionParameters()
 	m_Frontend->SetStatusBarText("");
 }
 
-//Execute the action
 void ActionAddRectangle::Execute()
 {
-	//read params
-	ReadActionParameters();
-
 	//create a rectangle
 	//gfxInfo should be a copy of Application::GetGfxInfo
-	CRectangle* rect = new CRectangle(m_P1, m_P2, *m_Application->GetGfxInfo());
+	m_Rectangle = new CRectangle(m_P1, m_P2, *m_Application->GetGfxInfo());
 
 	//add the rectangle to the list of figures
-	m_Application->AddFigure(rect);
+	m_Application->AddFigure(m_Rectangle);
+}
+
+void ActionAddRectangle::Undo()
+{
+	m_Application->DeleteFigure(m_Rectangle);
+	m_Application->Render(true); //re-render
+}
+
+ActionType ActionAddRectangle::GetActionType()
+{
+	return ACTION_DRAW_SHAPE_RECTANGLE;
 }

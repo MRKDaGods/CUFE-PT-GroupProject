@@ -128,14 +128,30 @@
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Core\Actions\Other\ActionLoad.cpp" />
+    <ClCompile Include="Core\Actions\Other\ActionSave.cpp" />
+    <ClCompile Include="Core\Actions\Other\ActionRedo.cpp" />
+    <ClCompile Include="Core\Actions\Other\ActionUndo.cpp" />
+    <ClCompile Include="Core\ActionHistory.cpp" />
+    <ClCompile Include="Core\Actions\Other\ActionClearAll.cpp" />
+    <ClCompile Include="Core\Actions\Other\ActionMove.cpp" />
+    <ClCompile Include="Core\Actions\Other\ActionDelete.cpp" />
+    <ClCompile Include="Core\Actions\Colors\ActionSetColorMode.cpp" />
+    <ClCompile Include="Core\Actions\Other\ActionSelect.cpp" />
     <ClCompile Include="Core\Actions\Colors\ActionSetColor.cpp" />
     <ClCompile Include="Core\Actions\Other\ActionExit.cpp" />
     <ClCompile Include="Core\Actions\Action.cpp" />
+    <ClCompile Include="Core\Actions\Shapes\ActionAddCircle.cpp" />
+    <ClCompile Include="Core\Actions\Shapes\ActionAddHexagon.cpp" />
     <ClCompile Include="Core\Actions\Shapes\ActionAddRectangle.cpp" />
     <ClCompile Include="Core\Actions\Shapes\ActionAddSquare.cpp" />
-    <ClCompile Include="Figures\CSquare.cpp" />
-    <ClCompile Include="Figures\CRectangle.cpp" />
+    <ClCompile Include="Core\Actions\Shapes\ActionAddTriangle.cpp" />
+    <ClCompile Include="Core\Deserializer.cpp" />
+    <ClCompile Include="Figures\CCircle.cpp" />
     <ClCompile Include="Figures\CFigure.cpp" />
+    <ClCompile Include="Figures\CHexagon.cpp" />
+    <ClCompile Include="Figures\CRectangle.cpp" />
+    <ClCompile Include="Figures\CSquare.cpp" />
     <ClCompile Include="Core\ActionData.cpp" />
     <ClCompile Include="Core\Application.cpp" />
     <ClCompile Include="CMUgraphicsLib\auxil.cpp" />
@@ -174,11 +190,13 @@
     <ClCompile Include="CMUgraphicsLib\jpeg\jquant1.c" />
     <ClCompile Include="CMUgraphicsLib\jpeg\jquant2.c" />
     <ClCompile Include="CMUgraphicsLib\jpeg\jutils.c" />
+    <ClCompile Include="Figures\CTriangle.cpp" />
     <ClCompile Include="GUI\Frontend\UIFrontend.cpp" />
     <ClCompile Include="GUI\Frontend\UITouchEvent.cpp" />
     <ClCompile Include="GUI\Input.cpp" />
     <ClCompile Include="GUI\Output.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Core\Serializer.cpp" />
     <ClCompile Include="TestCode.cpp" />
     <ClCompile Include="GUI\Frontend\UIWidget.cpp" />
     <ClCompile Include="GUI\Frontend\UIDisplay.cpp" />
@@ -188,17 +206,36 @@
     <ClCompile Include="GUI\Frontend\UIWindow.cpp" />
     <ClCompile Include="GUI\Frontend\UILineRenderer.cpp" />
     <ClCompile Include="GUI\Frontend\UILabel.cpp" />
+    <ClCompile Include="Utils\GeoUtils.cpp" />
     <ClCompile Include="Utils\Vector2.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Core\Actions\Other\ActionLoad.h" />
+    <ClInclude Include="Core\Actions\Other\ActionSave.h" />
+    <ClInclude Include="Core\Actions\Other\ActionRedo.h" />
+    <ClInclude Include="Core\Actions\Other\ActionUndo.h" />
+    <ClInclude Include="Core\Serializer.h" />
+    <ClInclude Include="Core\Deserializer.h" />
+    <ClInclude Include="Utils\CircularBuffer.hpp" />
+    <ClInclude Include="Core\ActionHistory.h" />
+    <ClInclude Include="Core\Actions\Other\ActionClearAll.h" />
+    <ClInclude Include="Core\Actions\Other\ActionMove.h" />
+    <ClInclude Include="Core\Actions\Other\ActionDelete.h" />
+    <ClInclude Include="Core\Actions\Colors\ActionSetColorMode.h" />
+    <ClInclude Include="Core\Actions\Other\ActionSelect.h" />
     <ClInclude Include="Core\Actions\Colors\ActionSetColor.h" />
     <ClInclude Include="Core\Actions\Other\ActionExit.h" />
+    <ClInclude Include="Core\Actions\Shapes\ActionAddCircle.h" />
+    <ClInclude Include="Core\Actions\Shapes\ActionAddHexagon.h" />
     <ClInclude Include="Core\Actions\Shapes\ActionAddRectangle.h" />
     <ClInclude Include="Core\Actions\Action.h" />
     <ClInclude Include="Core\Actions\Shapes\ActionAddSquare.h" />
-    <ClInclude Include="Figures\CSquare.h" />
-    <ClInclude Include="Figures\CRectangle.h" />
+    <ClInclude Include="Core\Actions\Shapes\ActionAddTriangle.h" />
+    <ClInclude Include="Figures\CCircle.h" />
     <ClInclude Include="Figures\CFigure.h" />
+    <ClInclude Include="Figures\CHexagon.h" />
+    <ClInclude Include="Figures\CRectangle.h" />
+    <ClInclude Include="Figures\CSquare.h" />
     <ClInclude Include="Core\ActionData.h" />
     <ClInclude Include="Core\Application.h" />
     <ClInclude Include="CMUgraphicsLib\auxil.h" />
@@ -222,6 +259,7 @@
     <ClInclude Include="CMUgraphicsLib\jpeg\jpeglib.h" />
     <ClInclude Include="CMUgraphicsLib\jpeg\jversion.h" />
     <ClInclude Include="Common.h" />
+    <ClInclude Include="Figures\CTriangle.h" />
     <ClInclude Include="GUI\Frontend\UIFrontend.h" />
     <ClInclude Include="GUI\Frontend\UITouchEvent.h" />
     <ClInclude Include="GUI\Input.h" />
@@ -237,6 +275,7 @@
     <ClInclude Include="GUI\Frontend\UILineRenderer.h" />
     <ClInclude Include="GUI\Frontend\UILabel.h" />
     <ClInclude Include="Utils\Color.h" />
+    <ClInclude Include="Utils\GeoUtils.h" />
     <ClInclude Include="Utils\Rect.h" />
     <ClInclude Include="Utils\Vector2.h" />
   </ItemGroup>

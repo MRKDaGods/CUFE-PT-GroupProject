@@ -43,10 +43,19 @@ public:
 	void Render();
 
 	//Sets the status bar text
-	void SetStatusBarText(string txt);
+	void SetStatusBarText(string txt) const;
 
 	void HandleTouchEvent(UITouchEvent* evt);
 
 	//Sets the current mode, false = DrawMode, true = PlayMode
 	void SetCurrentMode(bool isPlayMode, bool notify = true);
+
+	//Resets the UI state to its initial
+	void Reset();
+
+	//Sets the selected color in the button list
+	void SetSelectedColor(DWColors color);
+
+	//Sets the selected color mode in the button list
+	void SetSelectedColorMode(DWColorModes mode);
 };
