@@ -5,9 +5,12 @@
 #include "UIButtonList.h"
 #include "UILabel.h"
 
+class Application;
+
 class UIFrontend
 {
 private:
+	Application* m_Application;
 	UIDisplay* m_Display;
 
 	//Core components
@@ -40,8 +43,17 @@ private:
 	void SetDrawModeState(bool enable);
 	void SetPlayModeState(bool enable);
 
+	//Sound button callback
+	void OnSoundButtonStateChanged();
+
+	//Drag button callback
+	void OnDragButtonClick();
+
+	//Resize button callback
+	void OnResizeButtonClick();
+
 public:
-	UIFrontend();
+	UIFrontend(Application* app);
 	~UIFrontend();
 
 	//Requests the main display to render

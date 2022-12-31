@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../Common.h"
 #include "../DEFS.h"
 #include "../GUI/Output.h"
 #include "../Core/Serializer.h"
@@ -33,6 +34,9 @@ public:
 
 	//Translates figure constraints by dx and dy
 	virtual void Translate(int dx, int dy) abstract;
+
+	//Resize figure with respect to dx and dy
+	virtual void Resize(int dx, int dy) abstract;
 
 	//Returns the absolute position of the figure, could be one of the vertices or just the center
 	virtual Point GetPosition() abstract;

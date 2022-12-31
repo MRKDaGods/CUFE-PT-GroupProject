@@ -7,7 +7,7 @@ CCircle::CCircle(Point center, Point radiusPoint, GfxInfo gfxInfo) : CFigure(gfx
 	m_Center = center;
 	m_RadiusPoint = radiusPoint;
 
-	m_Radius = ((Vector2)m_Center - m_RadiusPoint).Magnitude();
+	UpdateRadius();
 }
 
 CCircle::CCircle(GfxInfo gfxInfo) : CFigure(gfxInfo)
@@ -16,6 +16,10 @@ CCircle::CCircle(GfxInfo gfxInfo) : CFigure(gfxInfo)
 	m_Radius = 0;
 }
 
+void CCircle::UpdateRadius()
+{
+	m_Radius = ((Vector2)m_Center - m_RadiusPoint).Magnitude();
+}
 
 void CCircle::Draw(Output* pOut) const
 {
@@ -55,6 +59,16 @@ void CCircle::Translate(int dx, int dy)
 
 	m_RadiusPoint.x += dx;
 	m_RadiusPoint.y += dy;
+}
+
+void CCircle::Resize(int dx, int dy)
+{
+	//center is constant
+	//radius point would keep moving
+	m_RadiusPoint.x += dx;
+	m_RadiusPoint.y += dy;
+
+	//recalculate radius
 }
 
 Point CCircle::GetPosition()
@@ -97,5 +111,5 @@ void CCircle::Load(Deserializer* deserializer)
 	m_GfxInfo.is_filled = deserializer->Read<bool>();
 
 	//further computations
-	m_Radius = ((Vector2)m_Center - m_RadiusPoint).Magnitude();
+	UpdateRadius();
 }

@@ -128,6 +128,9 @@
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Core\Actions\Extra\ActionResize.cpp" />
+    <ClCompile Include="Core\Actions\Extra\ActionDrag.cpp" />
+    <ClCompile Include="Core\Actions\Extra\ActionSound.cpp" />
     <ClCompile Include="Core\Actions\Play\ActionPickAndHide.cpp" />
     <ClCompile Include="Core\Actions\Play\ActionSwitchToDraw.cpp" />
     <ClCompile Include="Core\Actions\Other\ActionSwitchToPlay.cpp" />
@@ -205,6 +208,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Core\Serializer.cpp" />
     <ClCompile Include="Core\Recorder.cpp" />
+    <ClCompile Include="Core\Sound.cpp" />
     <ClCompile Include="TestCode.cpp" />
     <ClCompile Include="GUI\Frontend\UIWidget.cpp" />
     <ClCompile Include="GUI\Frontend\UIDisplay.cpp" />
@@ -214,10 +218,14 @@
     <ClCompile Include="GUI\Frontend\UIWindow.cpp" />
     <ClCompile Include="GUI\Frontend\UILineRenderer.cpp" />
     <ClCompile Include="GUI\Frontend\UILabel.cpp" />
+    <ClCompile Include="GUI\Frontend\UIToggleButton.cpp" />
     <ClCompile Include="Utils\GeoUtils.cpp" />
     <ClCompile Include="Utils\Vector2.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Core\Actions\Extra\ActionResize.h" />
+    <ClInclude Include="Core\Actions\Extra\ActionDrag.h" />
+    <ClInclude Include="Core\Actions\Extra\ActionSound.h" />
     <ClInclude Include="Core\Actions\Play\ActionPickAndHide.h" />
     <ClInclude Include="Core\Actions\Play\ActionSwitchToDraw.h" />
     <ClInclude Include="Core\Actions\Other\ActionSwitchToPlay.h" />
@@ -232,6 +240,8 @@
     <ClInclude Include="Core\Deserializer.h" />
     <ClInclude Include="Core\Recorder.h" />
     <ClInclude Include="Core\Graph.h" />
+    <ClInclude Include="GUI\Frontend\UIToggleButton.h" />
+    <ClInclude Include="Core\Sound.h" />
     <ClInclude Include="Utils\CircularBuffer.hpp" />
     <ClInclude Include="Core\ActionHistory.h" />
     <ClInclude Include="Core\Actions\Other\ActionClearAll.h" />

@@ -69,6 +69,20 @@ void CRectangle::Translate(int dx, int dy)
 	UpdateScreenSpaceRect();
 }
 
+void CRectangle::Resize(int dx, int dy)
+{
+	//change our rect values and reflect them on our points
+	m_Rect.w += dx;
+	m_Rect.h += dy;
+
+	//p1 is xmin ymin, p2 is xmax ymax
+	m_P1 = Point{ (int)m_Rect.XMin(), (int)m_Rect.YMin() };
+	m_P1 = Point{ (int)m_Rect.XMax(), (int)m_Rect.YMax() };
+
+	//no need to recalculate rect
+	UpdateScreenSpaceRect();
+}
+
 Point CRectangle::GetPosition()
 {
 	//return the center of the rectangle

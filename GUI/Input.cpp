@@ -46,6 +46,10 @@ bool Input::GetMouseDown()
 	return pWind->GetMouseClick(p.x, p.y) != NO_CLICK;
 }
 
+bool Input::GetRealTimeMouseDown() {
+	return (GetKeyState(VK_LBUTTON) & 0x8000) != 0;
+}
+
 //This function reads the position where the user clicks to determine the desired action
 ActionType Input::GetUserAction() const
 {	

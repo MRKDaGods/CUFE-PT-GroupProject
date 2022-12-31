@@ -63,6 +63,16 @@ enum ActionType //The actions supported (you can add more if needed)
 
 	//////////////////////////////////////////////////////////////////
 
+	ACTION_DRAW_EXTRA_BEGIN,
+
+	ACTION_DRAW_EXTRA_SOUND,
+	ACTION_DRAW_EXTRA_DRAG,
+	ACTION_DRAW_EXTRA_RESIZE,
+
+	ACTION_DRAW_EXTRA_END,
+
+	//////////////////////////////////////////////////////////////////
+
 	ACTION_PLAY_PICKHIDE_BEGIN, //mark play mode pick hide beginnning
 
 	ACTION_PLAY_PICKHIDE_FIGTYPE,

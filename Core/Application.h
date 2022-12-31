@@ -14,6 +14,7 @@
 #include "ActionHistory.h"
 #include "Recorder.h"
 #include "Graph.h"
+#include "Sound.h"
 
 #define DEBUG_LOG_PARAM std::stringstream& stream
 #define MAX_FIGURE_COUNT 200
@@ -65,6 +66,9 @@ private:
 	//Responsible for the graph data
 	Graph* m_Graph;
 
+	//Responsible for playing sound
+	Sound* m_Sound;
+
 	//Prints a message to the status bar
 	void Print(string msg) const;
 
@@ -79,7 +83,7 @@ public:
 	bool IsRunning() const;
 
 	//Manually requests the frontend to render
-	void Render(bool clearDrawArea = false);
+	void Render(bool clearDrawArea = false, bool renderFrontend = true);
 
 	//App main loop
 	void Loop();
@@ -175,4 +179,7 @@ public:
 
 	//Returns a random color of an existing figure with specified shape
 	color GetRandomColorForShape(DWShape shape);
+
+	//Returns a pointer to a sound
+	Sound* GetSound();
 };

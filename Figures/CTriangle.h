@@ -20,6 +20,7 @@ public:
 	virtual bool HitTest(Point hit) override;
 	virtual void PrintInfo(const UIFrontend* frontend) const override;
 	virtual void Translate(int dx, int dy) override;
+	virtual void Resize(int dx, int dy) override;
 	virtual Point GetPosition() override;
 	virtual DWShape GetShape() override;
 	virtual void Save(Serializer* serializer) override;

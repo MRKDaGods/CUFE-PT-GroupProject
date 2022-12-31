@@ -3,6 +3,10 @@
 #include "Actions/Colors/ActionSetColor.h"
 #include "Actions/Colors/ActionSetColorMode.h"
 
+#include "Actions/Extra/ActionSound.h"
+#include "Actions/Extra/ActionDrag.h"
+#include "Actions/Extra/ActionResize.h"
+
 #include "Actions/Other/ActionSelect.h"
 #include "Actions/Other/ActionMove.h"
 #include "Actions/Other/ActionDelete.h"
@@ -91,7 +95,14 @@ std::map<ActionType, ActionInstantiator> actionDataTable2 {
 	{ ACTION_PLAY_PICKHIDE_FIGTYPE, _ACT_FNPTR_PICKANDHIDE(PMPICKHIDE_FIG_TYPE) },
 	{ ACTION_PLAY_PICKHIDE_FIGCOL, _ACT_FNPTR_PICKANDHIDE(PMPICKHIDE_FIG_COL) },
 	{ ACTION_PLAY_PICKHIDE_FIGTYPE_COL, _ACT_FNPTR_PICKANDHIDE(PMPICKHIDE_FIG_TYPE_COL) },
-	{ ACTION_PLAY_OTHER_DRAW, _ACT_FNPTR(ActionSwitchToDraw) }
+	{ ACTION_PLAY_OTHER_DRAW, _ACT_FNPTR(ActionSwitchToDraw) },
+
+	//////////////////////////////////////////////
+	//Extra actions (bonus)
+	//////////////////////////////////////////////
+	{ ACTION_DRAW_EXTRA_SOUND, _ACT_FNPTR(ActionSound) },
+	{ ACTION_DRAW_EXTRA_DRAG, _ACT_FNPTR(ActionDrag) },
+	{ ACTION_DRAW_EXTRA_RESIZE, _ACT_FNPTR(ActionResize) },
 };
 
 std::map<ActionType, ActionData*> actionDataTable {
@@ -177,7 +188,7 @@ Application::Application()
 	SetGfxInfo();
 
 	//create frontend
-	m_Frontend = new UIFrontend;
+	m_Frontend = new UIFrontend(this);
 
 	//initialize selected figure
 	m_SelectedFigure = 0;
@@ -197,6 +208,9 @@ Application::Application()
 	//initialize graph
 	m_Graph = new Graph(this);
 
+	//initialize sound
+	m_Sound = new Sound();
+
 	//init rand
 	srand(time(0));
 }
@@ -209,6 +223,7 @@ Application::~Application()
 	delete m_ActionHistory;
 	delete m_Recorder;
 	delete m_Graph;
+	delete m_Sound;
 
 	//delete action data as well
 	for (auto &x : actionDataTable)
@@ -222,7 +237,7 @@ bool Application::IsRunning() const
 	return m_IsRunning;
 }
 
-void Application::Render(bool clearDrawArea)
+void Application::Render(bool clearDrawArea, bool renderFrontend)
 {
 	if (clearDrawArea)
 	{
@@ -237,8 +252,11 @@ void Application::Render(bool clearDrawArea)
 		}
 	}
 
-	//frontend should be the top most
-	m_Frontend->Render();
+	if (renderFrontend)
+	{
+		//frontend should be the top most
+		m_Frontend->Render();
+	}
 }
 
 void Application::Loop()
@@ -378,6 +396,12 @@ void Application::HandleAction(const ActionType& type)
 	{
 		//call instantiator and create action
 		auto action = instantiator(this);
+
+		//if sound is enabled, play the sound
+		if (m_Sound->IsEnabled())
+		{
+			m_Sound->PlaySound(type);
+		}
 
 		//read params externally
 		if (action->CanReadActionParameters())
@@ -690,4 +714,9 @@ color Application::GetRandomColorForShape(DWShape shape)
 
 	//return a random element from the set
 	return *std::next(cols.begin(), rand() % cols.size());
+}
+
+Sound* Application::GetSound()
+{
+	return m_Sound;
 }

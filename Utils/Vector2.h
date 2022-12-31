@@ -1,5 +1,7 @@
 #pragma once
 
+struct Point;
+
 //Point representation as a floating point
 struct Vector2
 {
@@ -23,7 +25,11 @@ struct Vector2
 		return x * x + y * y;
 	}
 
+	//Returns the magnitude of the vector
 	float Magnitude();
+
+	//Returns the normalized vector
+	Vector2 Normalize();
 
 	Vector2 operator+(Vector2 other)
 	{
@@ -55,4 +61,7 @@ struct Vector2
 	{
 		return Vector2(x * other, y * other);
 	}
+
+	//Implicit conversion to Point
+	operator Point();
 };

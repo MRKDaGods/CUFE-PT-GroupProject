@@ -15,3 +15,14 @@ Point::operator Vector2()
 {
 	return Vector2(x, y);
 }
+
+Vector2 Vector2::Normalize()
+{
+	float mag = Magnitude();
+	return (*this) * (1.0f / mag);
+}
+
+Vector2::operator Point()
+{
+	return Point{ (int)x, (int)y };
+}

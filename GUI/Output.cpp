@@ -70,7 +70,7 @@ Output::Output(void* app)
 	UI.IconSeperatorWidth = 1;
 
 	//the draw area start offset to leave space for extra frontend UI elements
-	UI.DrawAreaStartOffset = 80;
+	UI.DrawAreaStartOffset = UI.MenuItemWidth; // 80;
 
 	//Create the output window
 	pWind = CreateWind(UI.width, UI.height, UI.wx, UI.wy);

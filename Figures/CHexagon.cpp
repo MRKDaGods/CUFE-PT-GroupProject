@@ -64,6 +64,17 @@ void CHexagon::Translate(int dx, int dy)
 	m_Center.y += dy;
 }
 
+void CHexagon::Resize(int dx, int dy)
+{
+	//change the fixed radius by the magnitude of these 2 multiplied by both's sign
+	int mag = dx * dx + dy * dy;
+
+	//for ex: if dx is negative, and dy is positive, we will decrease the fixed radius
+	int dir = SIGN(dx) * SIGN(dy);
+
+	m_GfxInfo.fixed_radius += mag * dir;
+}
+
 Point CHexagon::GetPosition()
 {
 	return m_Center;

@@ -186,6 +186,11 @@
     <ClCompile Include="Core\Actions\Play\ActionSwitchToDraw.cpp" />
     <ClCompile Include="Core\Graph.cpp" />
     <ClCompile Include="Core\Actions\Play\ActionPickAndHide.cpp" />
+    <ClCompile Include="GUI\Frontend\UIToggleButton.cpp" />
+    <ClCompile Include="Core\Actions\Extra\ActionSound.cpp" />
+    <ClCompile Include="Core\Sound.cpp" />
+    <ClCompile Include="Core\Actions\Extra\ActionDrag.cpp" />
+    <ClCompile Include="Core\Actions\Extra\ActionResize.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CMUgraphicsLib\auxil.h">
@@ -314,5 +319,10 @@
     <ClInclude Include="Core\Actions\Play\ActionSwitchToDraw.h" />
     <ClInclude Include="Core\Graph.h" />
     <ClInclude Include="Core\Actions\Play\ActionPickAndHide.h" />
+    <ClInclude Include="GUI\Frontend\UIToggleButton.h" />
+    <ClInclude Include="Core\Actions\Extra\ActionSound.h" />
+    <ClInclude Include="Core\Sound.h" />
+    <ClInclude Include="Core\Actions\Extra\ActionDrag.h" />
+    <ClInclude Include="Core\Actions\Extra\ActionResize.h" />
   </ItemGroup>
 </Project>

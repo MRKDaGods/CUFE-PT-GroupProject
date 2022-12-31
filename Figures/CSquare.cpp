@@ -64,6 +64,18 @@ void CSquare::Translate(int dx, int dy)
 	UpdateScreenSpaceRect();
 }
 
+void CSquare::Resize(int dx, int dy)
+{
+	//we will use the same approach as hexagon
+	//change the fixed radius by the magnitude of these 2 multiplied by both's sign
+	int mag = dx * dx + dy * dy;
+
+	//for ex: if dx is negative, and dy is positive, we will decrease the fixed radius
+	int dir = SIGN(dx) * SIGN(dy);
+
+	m_GfxInfo.fixed_radius += mag * dir;
+}
+
 Point CSquare::GetPosition()
 {
 	return m_Center;

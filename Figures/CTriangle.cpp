@@ -61,6 +61,45 @@ void CTriangle::Translate(int dx, int dy)
 	m_P3.y += dy;
 }
 
+void CTriangle::Resize(int dx, int dy)
+{
+	//so thinking about it
+	//we can get the direction vector from the centroid to the point
+	//and translate the point along that direction multiplied by magnitude and dir from the hexagon approach
+
+	//get centroid
+	Point centroid = GetPosition();
+
+	//first dir vector
+	Vector2 v1 = ((Vector2)m_P1 - centroid).Normalize();
+
+	//second dir vector
+	Vector2 v2 = ((Vector2)m_P2 - centroid).Normalize();
+
+	//third dir vector
+	Vector2 v3 = ((Vector2)m_P3 - centroid).Normalize();
+
+	//get mag and dir using hexagon approach
+	//change the fixed radius by the magnitude of these 2 multiplied by both's sign
+	int mag = dx * dx + dy * dy;
+
+	//for ex: if dx is negative, and dy is positive, we will decrease the fixed radius
+	int dir = SIGN(dx) * SIGN(dy);
+
+	//translate points accordingly
+
+	float change = mag * dir;
+
+	//calculate new points
+	Vector2 newP1 = (Vector2)m_P1 + v1 * change;
+	Vector2 newP2 = (Vector2)m_P2 + v2 * change;
+	Vector2 newP3 = (Vector2)m_P3 + v3 * change;
+
+	m_P1 = newP1;
+	m_P2 = newP2;
+	m_P3 = newP3;
+}
+
 Point CTriangle::GetPosition()
 {
 	//centroid of triangle
