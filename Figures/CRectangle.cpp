@@ -78,9 +78,14 @@ Point CRectangle::GetPosition()
 	};
 }
 
+DWShape CRectangle::GetShape()
+{
+	return DWSHAPE_RECTANGLE;
+}
+
 void CRectangle::Save(Serializer* serializer)
 {
-	serializer->Write(DWSHAPE_RECTANGLE);
+	serializer->Write(GetShape());
 	serializer->Write(m_ID);
 
 	//coords

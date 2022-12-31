@@ -69,9 +69,14 @@ Point CSquare::GetPosition()
 	return m_Center;
 }
 
+DWShape CSquare::GetShape()
+{
+	return DWSHAPE_SQUARE;
+}
+
 void CSquare::Save(Serializer* serializer)
 {
-	serializer->Write(DWSHAPE_SQUARE);
+	serializer->Write(GetShape());
 	serializer->Write(m_ID);
 
 	//coords

@@ -36,3 +36,13 @@ bool Action::IsChangeColorModeAction()
 	ActionType type = GetActionType();
 	return type > ACTION_DRAW_COLMODE_BEGIN && type < ACTION_DRAW_COLMODE_END;
 }
+
+void Action::SetRecorded(bool recorded)
+{
+	m_IsRecorded = recorded;
+}
+
+bool Action::IsRecorded()
+{
+	return m_IsRecorded;
+}

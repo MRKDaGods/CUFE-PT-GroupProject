@@ -37,6 +37,9 @@ public:
 	//Returns the absolute position of the figure, could be one of the vertices or just the center
 	virtual Point GetPosition() abstract;
 
+	//Returns the shape as an enum value
+	virtual DWShape GetShape() abstract;
+
 	//Saves the figure
 	virtual void Save(Serializer* serializer) abstract;
 

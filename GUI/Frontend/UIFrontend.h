@@ -21,6 +21,10 @@ private:
 	UIButtonList* m_ColorPalette;
 	UIButtonList* m_ColorPrefList; // Fill/Draw
 	UIButtonList* m_OtherActionsList;
+	UILabel* m_RecordingLabel;
+
+	//The widgets on the left for draw mode (sound, resize, move drag)
+	UIWindow* m_DWLeftWidgetsContainer;
 
 	//Play mode components
 	UIButtonList* m_PickHideList;
@@ -28,6 +32,7 @@ private:
 
 	void CreateToolBar();
 	void CreateStatusBar();
+	void CreateOtherElements();
 
 	void BuildDrawModeToolBar();
 	void BuildPlayModeToolBar();
@@ -58,4 +63,7 @@ public:
 
 	//Sets the selected color mode in the button list
 	void SetSelectedColorMode(DWColorModes mode);
+
+	//Sets the UI recording state
+	void SetRecording(bool recording, bool invokeDirty = false, std::string text = "REC");
 };

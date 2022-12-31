@@ -70,9 +70,14 @@ Point CTriangle::GetPosition()
 	};
 }
 
+DWShape CTriangle::GetShape()
+{
+	return DWSHAPE_TRIANGLE;
+}
+
 void CTriangle::Save(Serializer* serializer)
 {
-	serializer->Write(DWSHAPE_TRIANGLE);
+	serializer->Write(GetShape());
 	serializer->Write(m_ID);
 
 	//coords

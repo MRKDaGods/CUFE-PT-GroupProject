@@ -2,6 +2,7 @@
 
 #include <functional>
 #include <stack>
+#include <vector>
 
 #include "../GUI/Frontend/UIFrontend.h"
 #include "../GUI/Output.h"
@@ -11,6 +12,8 @@
 #include "Actions/Action.h"
 #include "ActionData.h"
 #include "ActionHistory.h"
+#include "Recorder.h"
+#include "Graph.h"
 
 #define DEBUG_LOG_PARAM std::stringstream& stream
 #define MAX_FIGURE_COUNT 200
@@ -55,6 +58,12 @@ private:
 
 	//Handles the action history
 	ActionHistory* m_ActionHistory;
+
+	//Handles the recording
+	Recorder* m_Recorder;
+
+	//Responsible for the graph data
+	Graph* m_Graph;
 
 	//Prints a message to the status bar
 	void Print(string msg) const;
@@ -145,4 +154,25 @@ public:
 
 	//Saves all figures to serializer
 	void SaveAll(Serializer* serializer);
+
+	//Returns the recorder
+	Recorder* GetRecorder();
+
+	//Returns a pointer to the graph
+	Graph* GetGraph();
+
+	//Gets distinct info of figures (colors/type) and passes them back using pointers
+	void GetDistinctFiguresInfo(std::vector<color>* colors, std::vector<DWShape>* shapes);
+
+	//Gets the number of figures with the specified shape
+	int GetFigureCountWithShape(DWShape shape);
+
+	//Gets the number of figures with the specified color
+	int GetFigureCountWithColor(color col);
+
+	//Gets the number of figures with the specified shape and color
+	int GetFigureCountWithShapeAndColor(DWShape shape, color col);
+
+	//Returns a random color of an existing figure with specified shape
+	color GetRandomColorForShape(DWShape shape);
 };

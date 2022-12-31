@@ -295,7 +295,7 @@ ActionData* action_draw_other_rec_stop = new ActionData{
 };
 
 ActionData* action_draw_other_rec_pause = new ActionData{
-	ACTION_DRAW_OTHER_REC_PAUSE,
+	ACTION_DRAW_OTHER_REC_PLAY,
 	MESSAGE_OTHER(RECORDING PAUSE),
 
 	//action callback

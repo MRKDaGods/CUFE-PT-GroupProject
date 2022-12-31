@@ -178,6 +178,14 @@
     <ClCompile Include="Core\Actions\Other\ActionSave.cpp" />
     <ClCompile Include="Core\Deserializer.cpp" />
     <ClCompile Include="Core\Actions\Other\ActionLoad.cpp" />
+    <ClCompile Include="Core\Recorder.cpp" />
+    <ClCompile Include="Core\Actions\Other\ActionStartRecording.cpp" />
+    <ClCompile Include="Core\Actions\Other\ActionStopRecording.cpp" />
+    <ClCompile Include="Core\Actions\Other\ActionPlayRecording.cpp" />
+    <ClCompile Include="Core\Actions\Other\ActionSwitchToPlay.cpp" />
+    <ClCompile Include="Core\Actions\Play\ActionSwitchToDraw.cpp" />
+    <ClCompile Include="Core\Graph.cpp" />
+    <ClCompile Include="Core\Actions\Play\ActionPickAndHide.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CMUgraphicsLib\auxil.h">
@@ -298,5 +306,13 @@
     <ClInclude Include="Core\Actions\Other\ActionSave.h" />
     <ClInclude Include="Core\Deserializer.h" />
     <ClInclude Include="Core\Actions\Other\ActionLoad.h" />
+    <ClInclude Include="Core\Recorder.h" />
+    <ClInclude Include="Core\Actions\Other\ActionStartRecording.h" />
+    <ClInclude Include="Core\Actions\Other\ActionStopRecording.h" />
+    <ClInclude Include="Core\Actions\Other\ActionPlayRecording.h" />
+    <ClInclude Include="Core\Actions\Other\ActionSwitchToPlay.h" />
+    <ClInclude Include="Core\Actions\Play\ActionSwitchToDraw.h" />
+    <ClInclude Include="Core\Graph.h" />
+    <ClInclude Include="Core\Actions\Play\ActionPickAndHide.h" />
   </ItemGroup>
 </Project>

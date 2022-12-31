@@ -128,6 +128,12 @@
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Core\Actions\Play\ActionPickAndHide.cpp" />
+    <ClCompile Include="Core\Actions\Play\ActionSwitchToDraw.cpp" />
+    <ClCompile Include="Core\Actions\Other\ActionSwitchToPlay.cpp" />
+    <ClCompile Include="Core\Actions\Other\ActionPlayRecording.cpp" />
+    <ClCompile Include="Core\Actions\Other\ActionStopRecording.cpp" />
+    <ClCompile Include="Core\Actions\Other\ActionStartRecording.cpp" />
     <ClCompile Include="Core\Actions\Other\ActionLoad.cpp" />
     <ClCompile Include="Core\Actions\Other\ActionSave.cpp" />
     <ClCompile Include="Core\Actions\Other\ActionRedo.cpp" />
@@ -191,12 +197,14 @@
     <ClCompile Include="CMUgraphicsLib\jpeg\jquant2.c" />
     <ClCompile Include="CMUgraphicsLib\jpeg\jutils.c" />
     <ClCompile Include="Figures\CTriangle.cpp" />
+    <ClCompile Include="Core\Graph.cpp" />
     <ClCompile Include="GUI\Frontend\UIFrontend.cpp" />
     <ClCompile Include="GUI\Frontend\UITouchEvent.cpp" />
     <ClCompile Include="GUI\Input.cpp" />
     <ClCompile Include="GUI\Output.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Core\Serializer.cpp" />
+    <ClCompile Include="Core\Recorder.cpp" />
     <ClCompile Include="TestCode.cpp" />
     <ClCompile Include="GUI\Frontend\UIWidget.cpp" />
     <ClCompile Include="GUI\Frontend\UIDisplay.cpp" />
@@ -210,12 +218,20 @@
     <ClCompile Include="Utils\Vector2.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Core\Actions\Play\ActionPickAndHide.h" />
+    <ClInclude Include="Core\Actions\Play\ActionSwitchToDraw.h" />
+    <ClInclude Include="Core\Actions\Other\ActionSwitchToPlay.h" />
+    <ClInclude Include="Core\Actions\Other\ActionPlayRecording.h" />
+    <ClInclude Include="Core\Actions\Other\ActionStopRecording.h" />
+    <ClInclude Include="Core\Actions\Other\ActionStartRecording.h" />
     <ClInclude Include="Core\Actions\Other\ActionLoad.h" />
     <ClInclude Include="Core\Actions\Other\ActionSave.h" />
     <ClInclude Include="Core\Actions\Other\ActionRedo.h" />
     <ClInclude Include="Core\Actions\Other\ActionUndo.h" />
     <ClInclude Include="Core\Serializer.h" />
     <ClInclude Include="Core\Deserializer.h" />
+    <ClInclude Include="Core\Recorder.h" />
+    <ClInclude Include="Core\Graph.h" />
     <ClInclude Include="Utils\CircularBuffer.hpp" />
     <ClInclude Include="Core\ActionHistory.h" />
     <ClInclude Include="Core\Actions\Other\ActionClearAll.h" />

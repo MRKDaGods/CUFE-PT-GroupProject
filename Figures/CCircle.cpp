@@ -62,9 +62,14 @@ Point CCircle::GetPosition()
 	return m_Center;
 }
 
+DWShape CCircle::GetShape()
+{
+	return DWSHAPE_CIRCLE;
+}
+
 void CCircle::Save(Serializer* serializer)
 {
-	serializer->Write(DWSHAPE_CIRCLE);
+	serializer->Write(GetShape());
 	serializer->Write(m_ID);
 
 	//coords

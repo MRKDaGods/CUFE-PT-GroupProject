@@ -2,9 +2,9 @@
 #include "../../Application.h"
 #include "../../Serializer.h"
 
-ActionSave::ActionSave(Application* app) : Action(app)
+ActionSave::ActionSave(Application* app, std::string fname) : Action(app)
 {
-	m_Filename = "";
+	m_Filename = fname;
 }
 
 void ActionSave::ReadActionParameters()
@@ -45,4 +45,10 @@ void ActionSave::Execute()
 ActionType ActionSave::GetActionType()
 {
 	return ACTION_DRAW_OTHER_SAVE_GRAPH;
+}
+
+bool ActionSave::CanReadActionParameters()
+{
+	//only read if filename is empty
+	return m_Filename.empty();
 }

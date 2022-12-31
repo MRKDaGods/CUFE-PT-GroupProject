@@ -21,6 +21,8 @@ private:
 	//Returns true if an action is supported by the undo/redo operation
 	bool IsActionSupported(Action* action);
 
+	bool IsActionInHistory(Action* action);
+
 	//Cleanup event handler for the actions circular buffer
 	static void OnActionRemoved(Action** action);
 
@@ -35,7 +37,13 @@ public:
 	//Clears the history
 	void Clear();
 
+	//Returns the history as a circular buffer
 	CircularBuffer<Action*, 5>* GetHistory();
+	
+	//Returns the last ran action
 	Action* GetLastAction();
+
+	//Decides which actions to delete from a stored recording buffer
+	void HandleRecordingBuffer(Action** buffer, int bufSz);
 };
 

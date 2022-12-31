@@ -69,9 +69,14 @@ Point CHexagon::GetPosition()
 	return m_Center;
 }
 
+DWShape CHexagon::GetShape()
+{
+	return DWSHAPE_HEXAGON;
+}
+
 void CHexagon::Save(Serializer* serializer)
 {
-	serializer->Write(DWSHAPE_HEXAGON);
+	serializer->Write(GetShape());
 	serializer->Write(m_ID);
 
 	//coords

@@ -13,6 +13,10 @@ class UIFrontend;
 //Base class for all possible actions
 class Action
 {
+private:
+	//Indicates whether this action is present in a recording or not
+	bool m_IsRecorded;
+
 protected:
 	Application* m_Application;
 	Output* m_Output;
@@ -45,4 +49,10 @@ public:
 
 	//Returns true if action is of change color mode type
 	bool IsChangeColorModeAction();
+
+	//Sets the recorded state of the action
+	void SetRecorded(bool recorded);
+
+	//Indicates whether the action has been recorded or not
+	bool IsRecorded();
 };

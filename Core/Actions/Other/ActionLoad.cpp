@@ -9,9 +9,9 @@
 
 #include <fstream>
 
-ActionLoad::ActionLoad(Application* app) : Action(app)
+ActionLoad::ActionLoad(Application* app, std::string fname) : Action(app)
 {
-	m_Filename = "";
+	m_Filename = fname;
 }
 
 void ActionLoad::ReadActionParameters()
@@ -131,4 +131,10 @@ void ActionLoad::Execute()
 ActionType ActionLoad::GetActionType()
 {
 	return ACTION_DRAW_OTHER_OPEN_GRAPH;
+}
+
+bool ActionLoad::CanReadActionParameters()
+{
+	//only read if filename is empty
+	return m_Filename.empty();
 }

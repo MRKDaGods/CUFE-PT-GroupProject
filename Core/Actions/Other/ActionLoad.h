@@ -10,9 +10,10 @@ private:
 	std::string m_Filename;
 
 public:
-	ActionLoad(Application* app);
+	ActionLoad(Application* app, std::string fname = "");
 
 	virtual void ReadActionParameters() override;
 	virtual void Execute() override;
 	virtual ActionType GetActionType() override;
+	virtual bool CanReadActionParameters() override;
 };

@@ -6,12 +6,19 @@
 #include "Actions/Other/ActionSelect.h"
 #include "Actions/Other/ActionMove.h"
 #include "Actions/Other/ActionDelete.h"
+#include "Actions/Other/ActionClearAll.h"
 #include "Actions/Other/ActionSave.h"
 #include "Actions/Other/ActionLoad.h"
-#include "Actions/Other/ActionClearAll.h"
+#include "Actions/Other/ActionStartRecording.h"
+#include "Actions/Other/ActionStopRecording.h"
+#include "Actions/Other/ActionPlayRecording.h"
 #include "Actions/Other/ActionUndo.h"
 #include "Actions/Other/ActionRedo.h"
+#include "Actions/Other/ActionSwitchToPlay.h"
 #include "Actions/Other/ActionExit.h"
+
+#include "Actions/Play/ActionPickAndHide.h"
+#include "Actions/Play/ActionSwitchToDraw.h"
 
 #include "Actions/Shapes/ActionAddRectangle.h"
 #include "Actions/Shapes/ActionAddSquare.h"
@@ -25,11 +32,14 @@
 #include <map>
 #include <iostream>
 #include <sstream>
+#include <set>
+#include <vector>
 
 //Action function pointer
 #define _ACT_FNPTR(actClass) [](Application* app) -> Action* { return new actClass(app); }
 #define _ACT_FNPTR_COL(col) [](Application* app) -> Action* { return new ActionSetColor(app, col); }
 #define _ACT_FNPTR_COLMODE(mode) [](Application* app) -> Action* { return new ActionSetColorMode(app, mode); }
+#define _ACT_FNPTR_PICKANDHIDE(mode) [](Application* app) -> Action* { return new ActionPickAndHide(app, mode); }
 
 //ActionType to function pointer that returns a new instance of the action
 std::map<ActionType, ActionInstantiator> actionDataTable2 {
@@ -67,9 +77,21 @@ std::map<ActionType, ActionInstantiator> actionDataTable2 {
 	{ ACTION_DRAW_OTHER_CLEAR_ALL, _ACT_FNPTR(ActionClearAll) },
 	{ ACTION_DRAW_OTHER_SAVE_GRAPH, _ACT_FNPTR(ActionSave) },
 	{ ACTION_DRAW_OTHER_OPEN_GRAPH, _ACT_FNPTR(ActionLoad) },
+	{ ACTION_DRAW_OTHER_REC_START, _ACT_FNPTR(ActionStartRecording) },
+	{ ACTION_DRAW_OTHER_REC_STOP, _ACT_FNPTR(ActionStopRecording) },
+	{ ACTION_DRAW_OTHER_REC_PLAY, _ACT_FNPTR(ActionPlayRecording) },
 	{ ACTION_DRAW_OTHER_UNDO, _ACT_FNPTR(ActionUndo) },
 	{ ACTION_DRAW_OTHER_REDO, _ACT_FNPTR(ActionRedo) },
-	{ ACTION_DRAW_OTHER_EXIT, _ACT_FNPTR(ActionExit) }
+	{ ACTION_DRAW_OTHER_PLAY, _ACT_FNPTR(ActionSwitchToPlay) },
+	{ ACTION_DRAW_OTHER_EXIT, _ACT_FNPTR(ActionExit) },
+
+	//////////////////////////////////////////////
+	//Play mode actions
+	//////////////////////////////////////////////
+	{ ACTION_PLAY_PICKHIDE_FIGTYPE, _ACT_FNPTR_PICKANDHIDE(PMPICKHIDE_FIG_TYPE) },
+	{ ACTION_PLAY_PICKHIDE_FIGCOL, _ACT_FNPTR_PICKANDHIDE(PMPICKHIDE_FIG_COL) },
+	{ ACTION_PLAY_PICKHIDE_FIGTYPE_COL, _ACT_FNPTR_PICKANDHIDE(PMPICKHIDE_FIG_TYPE_COL) },
+	{ ACTION_PLAY_OTHER_DRAW, _ACT_FNPTR(ActionSwitchToDraw) }
 };
 
 std::map<ActionType, ActionData*> actionDataTable {
@@ -109,7 +131,7 @@ std::map<ActionType, ActionData*> actionDataTable {
 	{ ACTION_DRAW_OTHER_OPEN_GRAPH, action_draw_other_open_graph },
 	{ ACTION_DRAW_OTHER_REC_START, action_draw_other_rec_start },
 	{ ACTION_DRAW_OTHER_REC_STOP, action_draw_other_rec_stop },
-	{ ACTION_DRAW_OTHER_REC_PAUSE, action_draw_other_rec_pause },
+	{ ACTION_DRAW_OTHER_REC_PLAY, action_draw_other_rec_pause },
 	{ ACTION_DRAW_OTHER_UNDO, action_draw_other_undo },
 	{ ACTION_DRAW_OTHER_REDO, action_draw_other_redo },
 	{ ACTION_DRAW_OTHER_PLAY, action_draw_other_play },
@@ -168,6 +190,15 @@ Application::Application()
 
 	//initialize action history
 	m_ActionHistory = new ActionHistory(this);
+
+	//initialize recorder
+	m_Recorder = new Recorder(this);
+
+	//initialize graph
+	m_Graph = new Graph(this);
+
+	//init rand
+	srand(time(0));
 }
 
 Application::~Application()
@@ -176,6 +207,8 @@ Application::~Application()
 	delete m_Input;
 	delete m_Frontend;
 	delete m_ActionHistory;
+	delete m_Recorder;
+	delete m_Graph;
 
 	//delete action data as well
 	for (auto &x : actionDataTable)
@@ -191,8 +224,6 @@ bool Application::IsRunning() const
 
 void Application::Render(bool clearDrawArea)
 {
-	m_Frontend->Render();
-
 	if (clearDrawArea)
 	{
 		m_Output->ClearDrawArea();
@@ -205,6 +236,9 @@ void Application::Render(bool clearDrawArea)
 			m_FigureList[i]->Draw(m_Output);
 		}
 	}
+
+	//frontend should be the top most
+	m_Frontend->Render();
 }
 
 void Application::Loop()
@@ -357,6 +391,12 @@ void Application::HandleAction(const ActionType& type)
 		//action history should delete the last executed action incase it was an unsupported one
 		//no memory leaks :)
 		m_ActionHistory->AddAction(action);
+
+		//if recording, add to recorder
+		if (m_Recorder->IsRecording())
+		{
+			m_Recorder->RecordAction(action);
+		}
 
 		//output action history debug
 		DebugLog(
@@ -548,4 +588,106 @@ void Application::SaveAll(Serializer* serializer)
 	{
 		m_FigureList[i]->Save(serializer);
 	}
+}
+
+Recorder* Application::GetRecorder()
+{
+	return m_Recorder;
+}
+
+Graph* Application::GetGraph()
+{
+	return m_Graph;
+}
+
+bool operator<(const color& c1, const color& c2)
+{
+	return c1.ucRed < c2.ucRed;
+}
+
+void Application::GetDistinctFiguresInfo(std::vector<color>* colors, std::vector<DWShape>* shapes)
+{
+	//find colors and shapes
+	//implement first using a set
+	std::set<color> cols;
+	std::set<DWShape> shps;
+
+	for (int i = 0; i < m_FigureCount; i++)
+	{
+		CFigure* fig = m_FigureList[i];
+
+		if (colors != 0)
+		{
+			cols.insert(fig->GetGfxInfo()->fill_col);
+		}
+
+		if (shapes != 0)
+		{
+			shps.insert(fig->GetShape());
+		}
+	}
+
+	//after adding to a set, we ensure that they contain unique elements
+	//initialize arrays
+	//store in a vector to put them in contiguous memory
+	//and then copy to pointer array
+	if (colors != 0)
+	{
+		*colors = std::vector<color>(cols.begin(), cols.end());
+	}
+
+	if (shapes != 0)
+	{
+		*shapes = std::vector<DWShape>(shps.begin(), shps.end());
+	}
+}
+
+int Application::GetFigureCountWithShape(DWShape shape)
+{
+	int c = 0;
+	for (int i = 0; i < m_FigureCount; i++)
+	{
+		if (m_FigureList[i]->GetShape() == shape) c++;
+	}
+
+	return c;
+}
+
+int Application::GetFigureCountWithColor(color col)
+{
+	int c = 0;
+	for (int i = 0; i < m_FigureCount; i++)
+	{
+		if (m_FigureList[i]->GetGfxInfo()->fill_col == col) c++;
+	}
+
+	return c;
+}
+
+int Application::GetFigureCountWithShapeAndColor(DWShape shape, color col)
+{
+	int c = 0;
+	for (int i = 0; i < m_FigureCount; i++)
+	{
+		if (m_FigureList[i]->GetShape() == shape && m_FigureList[i]->GetGfxInfo()->fill_col == col) c++;
+	}
+
+	return c;
+}
+
+color Application::GetRandomColorForShape(DWShape shape)
+{
+	//store in a set to attain uniqueness
+	std::set<color> cols;
+
+	for (int i = 0; i < m_FigureCount; i++)
+	{
+		if (m_FigureList[i]->GetShape() == shape)
+		{
+			cols.insert(m_FigureList[i]->GetGfxInfo()->fill_col);
+		}
+	}
+
+	//return a random element from the set
+	return *std::next(cols.begin(), rand() % cols.size());
 }
