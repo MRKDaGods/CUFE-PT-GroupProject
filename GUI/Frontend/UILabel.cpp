@@ -18,10 +18,16 @@ void UILabel::Draw()
 	UIWidget::Draw();
 }
 
-void UILabel::SetText(std::string txt)
+void UILabel::SetText(std::string txt, bool notify)
 {
+	//dont update if same value
+	if (m_Text == txt) return;
+
 	m_Text = txt;
 	
-	//invalidate
-	Invalidate();
+	if (notify)
+	{
+		//invalidate
+		Invalidate();
+	}
 }

@@ -6,19 +6,6 @@
 
 #include <sstream>
 
-void UIButtonList::UpdateSelectedButton(int idx)
-{
-	if (!m_Selectable) return;
-
-	if (m_SelectedButton != -1)
-	{
-		m_Buttons[m_SelectedButton]->SetSelected(false, false);
-	}
-
-	m_SelectedButton = idx;
-	m_Buttons[m_SelectedButton]->SetSelected(true);
-}
-
 UIButtonList::UIButtonList(UIWidget* parent, UIAnchor anchor, Rect rect, bool selectable, int count, std::string* shapeTextures, ActionType* actions, Color selectColor)
 	: UIWidget(parent, anchor, rect, UIWidgetType::ShapeList)
 {
@@ -69,4 +56,17 @@ void UIButtonList::Draw()
 
 	//render children
 	UIWidget::Draw();
+}
+
+void UIButtonList::UpdateSelectedButton(int idx, bool notify)
+{
+	if (!m_Selectable) return;
+
+	if (m_SelectedButton != -1)
+	{
+		m_Buttons[m_SelectedButton]->SetSelected(false, false);
+	}
+
+	m_SelectedButton = idx;
+	m_Buttons[m_SelectedButton]->SetSelected(true, notify);
 }

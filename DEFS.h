@@ -1,7 +1,7 @@
 #ifndef DEFS_H
 #define DEFS_H
 
-#include "CMUgraphicsLib\CMUgraphics.h"
+#include "CMUgraphicsLib/CMUgraphics.h"
 
 //This file contains some global constants and definitions to be used in the project.
 enum ActionType //The actions supported (you can add more if needed)
@@ -53,13 +53,23 @@ enum ActionType //The actions supported (you can add more if needed)
 	ACTION_DRAW_OTHER_OPEN_GRAPH,
 	ACTION_DRAW_OTHER_REC_START,
 	ACTION_DRAW_OTHER_REC_STOP,
-	ACTION_DRAW_OTHER_REC_PAUSE,
+	ACTION_DRAW_OTHER_REC_PLAY,
 	ACTION_DRAW_OTHER_UNDO,
 	ACTION_DRAW_OTHER_REDO,
 	ACTION_DRAW_OTHER_PLAY,
 	ACTION_DRAW_OTHER_EXIT,
 
 	ACTION_DRAW_OTHER_END,
+
+	//////////////////////////////////////////////////////////////////
+
+	ACTION_DRAW_EXTRA_BEGIN,
+
+	ACTION_DRAW_EXTRA_SOUND,
+	ACTION_DRAW_EXTRA_DRAG,
+	ACTION_DRAW_EXTRA_RESIZE,
+
+	ACTION_DRAW_EXTRA_END,
 
 	//////////////////////////////////////////////////////////////////
 
@@ -83,9 +93,13 @@ enum ActionType //The actions supported (you can add more if needed)
 	//////////////////////////////////////////////////////////////////
 };
 
+struct Vector2;
+
 struct Point	//To be used for figures points
 {
 	int x, y;
+
+	operator Vector2(); //defined in Vector2.cpp
 };
 
 //Graphical info of each figure
@@ -150,7 +164,7 @@ enum DWOtherActions
 	DWOTHER_OPEN_GRAPH,
 	DWOTHER_REC_START,
 	DWOTHER_REC_STOP,
-	DWOTHER_REC_PAUSE,
+	DWOTHER_REC_PLAY,
 	DWOTHER_UNDO,
 	DWOTHER_REDO,
 	DWOTHER_PLAY,

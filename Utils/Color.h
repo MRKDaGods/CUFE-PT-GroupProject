@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../DEFS.h"
+
 struct Color
 {
 	float r;
@@ -39,3 +41,44 @@ struct Color
 			a.b + ((b.b - a.b) * t), a.a + ((b.a - a.a) * t));
 	}
 };
+
+inline DWColors NativeToFrontendColor(color c)
+{
+	if (c == BLACK) return DWCOLOR_BLACK;
+	if (c == YELLOW) return DWCOLOR_YELLOW;
+	if (c == ORANGE) return DWCOLOR_ORANGE;
+	if (c == RED) return DWCOLOR_RED;
+	if (c == GREEN) return DWCOLOR_GREEN;
+	if (c == BLUE) return DWCOLOR_BLUE;
+
+	return DWCOLOR_BLACK;
+}
+
+inline color FrontendToNativeColor(DWColors c)
+{
+	switch (c)
+	{
+	case DWCOLOR_BLACK:
+		return BLACK;
+
+	case DWCOLOR_YELLOW:
+		return YELLOW;
+
+	case DWCOLOR_ORANGE:
+		return ORANGE;
+
+	case DWCOLOR_RED:
+		return RED;
+
+	case DWCOLOR_GREEN:
+		return GREEN;
+
+	case DWCOLOR_BLUE:
+		return BLUE;
+
+	case DWCOLOR_COUNT:
+		break;
+	}
+
+	return BLACK;
+}

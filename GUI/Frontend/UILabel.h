@@ -4,7 +4,7 @@
 
 #include "UIWidget.h"
 
-class UILabel : UIWidget
+class UILabel : public UIWidget
 {
 private:
 	int m_FontSize;
@@ -13,6 +13,5 @@ private:
 public:
 	UILabel(UIWidget* parent, UIAnchor anchor, Rect rect, int fontSz, std::string txt);
 	virtual void Draw() override;
-	void SetText(std::string txt);
+	void SetText(std::string txt, bool notify = true);
 };
-

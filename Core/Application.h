@@ -1,14 +1,25 @@
 #pragma once
 
 #include <functional>
+#include <stack>
+#include <vector>
 
 #include "../GUI/Frontend/UIFrontend.h"
 #include "../GUI/Output.h"
 #include "../GUI/Input.h"
-#include "ActionData.h"
 #include "../Common.h"
+#include "../Figures/CFigure.h"
+#include "Actions/Action.h"
+#include "ActionData.h"
+#include "ActionHistory.h"
+#include "Recorder.h"
+#include "Graph.h"
+#include "Sound.h"
 
 #define DEBUG_LOG_PARAM std::stringstream& stream
+#define MAX_FIGURE_COUNT 200
+
+typedef Action*(*ActionInstantiator)(Application*);
 
 class Application
 {
@@ -23,7 +34,7 @@ private:
 	bool m_IsRunning;
 
 	//Figure graphical information
-	GfxInfo m_GfxInfo;
+	std::stack<GfxInfo> m_GfxStack;
 
 	//The interface frontend, responsible for top level rendering
 	UIFrontend* m_Frontend;
@@ -34,17 +45,35 @@ private:
 	//The current color mode
 	DWColorModes m_CurrentColorMode;
 
+	//The current color
+	DWColors m_CurrentColor;
+
+	//Actual number of figures
+	int m_FigureCount;
+
+	//List of all figures
+	CFigure* m_FigureList[MAX_FIGURE_COUNT];
+
+	//Pointer to the selected figure
+	CFigure* m_SelectedFigure;
+
+	//Handles the action history
+	ActionHistory* m_ActionHistory;
+
+	//Handles the recording
+	Recorder* m_Recorder;
+
+	//Responsible for the graph data
+	Graph* m_Graph;
+
+	//Responsible for playing sound
+	Sound* m_Sound;
+
 	//Prints a message to the status bar
 	void Print(string msg) const;
 
-	//Determines whether the given action is a draw mode action or not
-	bool IsDrawModeAction(const ActionType& action) const;
-
-	//Handles an action related to draw mode
-	void HandleDrawModeAction(const ActionType& action);
-
-	//Returns an action data from type, null if not found
-	ActionData* GetActionDataFromType(ActionType type);
+	//Returns an action instantiator from type, null if not found
+	ActionInstantiator GetActionInstantiatorFromType(const ActionType& type);
 
 public:
 	Application();
@@ -54,7 +83,7 @@ public:
 	bool IsRunning() const;
 
 	//Manually requests the frontend to render
-	void Render();
+	void Render(bool clearDrawArea = false, bool renderFrontend = true);
 
 	//App main loop
 	void Loop();
@@ -62,8 +91,12 @@ public:
 	//Sets the graphical info to use
 	void SetGfxInfo(color drawColor = BLACK, int borderWidth = 5, bool fill = false, color fillColor = BLACK, int fixedRadius = 50);
 
-	//Returns the gfx info
+	//Returns the gfx info at the top of the stack
 	GfxInfo* GetGfxInfo();
+
+	void PushGfxInfo(const GfxInfo& gfxInfo);
+
+	void PopGfxInfo();
 
 	//Logs a debug message to the console
 	void DebugLog(string msg, bool appendNewLine = true);
@@ -77,6 +110,9 @@ public:
 	//Returns a pointer to Input
 	Input* GetInput();
 
+	//Returns a pointer to UIFrontend
+	UIFrontend* GetUIFrontend();
+
 	//Handles an action of ActionType type
 	void HandleAction(const ActionType& type);
 
@@ -86,9 +122,64 @@ public:
 	DWColorModes GetCurrentColorMode();
 	void SetCurrentColorMode(DWColorModes colMode);
 
-	//Sets the current color with respect to the selected color mode (fill/draw)
-	void SetDrawModeColor(DWColors color);
+	DWColors GetCurrentColor();
+	void SetCurrentColor(DWColors color);
 
 	//Sets the current mode, false = DrawMode, true = PlayMode
 	void SetCurrentMode(bool isPlayMode);
+
+	//Adds a new figure to the FigList
+	void AddFigure(CFigure* pFig, bool clearDrawArea = false, bool shouldRender = true);
+
+	//Removes a figure if exists
+	//deletePtr if true, the underlying pointer will be deleted
+	void DeleteFigure(CFigure* fig, bool deletePtr = true);
+
+	//Deletes all figures if any
+	void DeleteAllFigures();
+
+	//Search for a figure given a point inside the figure
+	CFigure* GetFigure(int x, int y) const;
+
+	//Returns true if a figure exists
+	bool ContainsFigure(CFigure* fig);
+
+	//Returns a pointer to the currently selected figure
+	CFigure* GetSelectedFigure();
+	
+	//Sets the currently selected figure
+	void SetSelectedFigure(CFigure* fig);
+
+	//Returns the action history
+	ActionHistory* GetActionHistory();
+
+	//Returns the number of figures
+	int GetFigureCount();
+
+	//Saves all figures to serializer
+	void SaveAll(Serializer* serializer);
+
+	//Returns the recorder
+	Recorder* GetRecorder();
+
+	//Returns a pointer to the graph
+	Graph* GetGraph();
+
+	//Gets distinct info of figures (colors/type) and passes them back using pointers
+	void GetDistinctFiguresInfo(std::vector<color>* colors, std::vector<DWShape>* shapes);
+
+	//Gets the number of figures with the specified shape
+	int GetFigureCountWithShape(DWShape shape);
+
+	//Gets the number of figures with the specified color
+	int GetFigureCountWithColor(color col);
+
+	//Gets the number of figures with the specified shape and color
+	int GetFigureCountWithShapeAndColor(DWShape shape, color col);
+
+	//Returns a random color of an existing figure with specified shape
+	color GetRandomColorForShape(DWShape shape);
+
+	//Returns a pointer to a sound
+	Sound* GetSound();
 };

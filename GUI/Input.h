@@ -22,6 +22,9 @@ public:
 	//Returns whether the mouse is clicked or not
 	bool GetMouseDown();
 
+	//Returns whether the mouse is clicked or not but immediate
+	bool GetRealTimeMouseDown();
+
 	ActionType GetUserAction() const; //Read the user click and map to an action
 
 	~Input();

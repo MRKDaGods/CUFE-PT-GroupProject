@@ -22,8 +22,6 @@ public:
 	Output(void* app);		
 
 	window* CreateWind(int, int, int , int) const; //creates the application window
-	void CreateDrawToolBar() const;	//creates Draw mode toolbar & menu
-	void CreatePlayToolBar() const;	//creates Play mode toolbar & menu
 	void CreateStatusBar() const;	//create the status bar
 
 	Input* CreateInput() const; //creates a pointer to the Input object	
@@ -59,7 +57,7 @@ public:
 	void DrawHexagon(Point center, bool selected = false) const;
 
 	//Draw a circle from given center and a point on the circumference
-	void DrawCircle(Point center, Point radiusPoint, bool selected = false) const;
+	void DrawCircle(Point center, Point radiusPoint, bool selected = false, int* outRadius = 0) const;
 	
 	//Print a message on Status bar
 	void PrintMessage(string msg) const;

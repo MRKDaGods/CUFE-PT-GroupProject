@@ -118,7 +118,7 @@ ActionData* action_draw_col_black = new ActionData{
 	//action callback
 	[](Application* app, Input* in, Output* out)
 	{
-		app->SetDrawModeColor(DWCOLOR_BLACK);
+		//app->SetDrawModeColor(DWCOLOR_BLACK);
 	}
 };
 
@@ -129,7 +129,7 @@ ActionData* action_draw_col_yellow = new ActionData{
 	//action callback
 	[](Application* app, Input* in, Output* out)
 	{
-		app->SetDrawModeColor(DWCOLOR_YELLOW);
+		//app->SetDrawModeColor(DWCOLOR_YELLOW);
 	}
 };
 
@@ -140,7 +140,7 @@ ActionData* action_draw_col_orange = new ActionData{
 	//action callback
 	[](Application* app, Input* in, Output* out)
 	{
-		app->SetDrawModeColor(DWCOLOR_ORANGE);
+		//app->SetDrawModeColor(DWCOLOR_ORANGE);
 	}
 };
 
@@ -151,7 +151,7 @@ ActionData* action_draw_col_red = new ActionData{
 	//action callback
 	[](Application* app, Input* in, Output* out)
 	{
-		app->SetDrawModeColor(DWCOLOR_RED);
+		//app->SetDrawModeColor(DWCOLOR_RED);
 	}
 };
 
@@ -162,7 +162,7 @@ ActionData* action_draw_col_green = new ActionData{
 	//action callback
 	[](Application* app, Input* in, Output* out)
 	{
-		app->SetDrawModeColor(DWCOLOR_GREEN);
+		//app->SetDrawModeColor(DWCOLOR_GREEN);
 	}
 };
 
@@ -173,7 +173,7 @@ ActionData* action_draw_col_blue = new ActionData{
 	//action callback
 	[](Application* app, Input* in, Output* out)
 	{
-		app->SetDrawModeColor(DWCOLOR_BLUE);
+		//app->SetDrawModeColor(DWCOLOR_BLUE);
 	}
 };
 
@@ -295,7 +295,7 @@ ActionData* action_draw_other_rec_stop = new ActionData{
 };
 
 ActionData* action_draw_other_rec_pause = new ActionData{
-	ACTION_DRAW_OTHER_REC_PAUSE,
+	ACTION_DRAW_OTHER_REC_PLAY,
 	MESSAGE_OTHER(RECORDING PAUSE),
 
 	//action callback

@@ -98,6 +98,9 @@ struct UI_Info	//User Interface Info.
 
 	//Toolbar icon seperator width
 	int IconSeperatorWidth;
+
+	//The x coord of the draw area
+	int DrawAreaStartOffset;
 	
 }UI;	//create a global object UI
 

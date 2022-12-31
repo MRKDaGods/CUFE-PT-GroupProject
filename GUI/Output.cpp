@@ -1,5 +1,6 @@
 #include "Output.h"
 #include "../Core/Application.h"
+#include "../Utils/GeoUtils.h"
 
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -68,13 +69,13 @@ Output::Output(void* app)
 	//seperator width
 	UI.IconSeperatorWidth = 1;
 
+	//the draw area start offset to leave space for extra frontend UI elements
+	UI.DrawAreaStartOffset = UI.MenuItemWidth; // 80;
+
 	//Create the output window
 	pWind = CreateWind(UI.width, UI.height, UI.wx, UI.wy);
 	//Change the title
 	pWind->ChangeTitle("Paint for Kids - Programming Techniques Project");
-
-	//CreateDrawToolBar();
-	//CreateStatusBar();
 }
 
 
@@ -112,60 +113,12 @@ void Output::ClearStatusBar() const
 	pWind->DrawRectangle(0, UI.height - UI.StatusBarHeight, UI.width, UI.height);
 }
 //////////////////////////////////////////////////////////////////////////////////////////
-void Output::CreateDrawToolBar() const
-{
-	UI.InterfaceMode = MODE_DRAW;
-
-	string MenuItemImages[DRAW_ITM_COUNT];
-	MenuItemImages[DRAW_ITM_RECT] = "images\\draw\\shapes\\img_rect.jpg";
-	MenuItemImages[DRAW_ITM_SQUARE] = "images\\draw\\shapes\\img_square.jpg";
-	MenuItemImages[DRAW_ITM_TRIANGLE] = "images\\draw\\shapes\\img_triangle.jpg";
-	MenuItemImages[DRAW_ITM_HEXAGON] = "images\\draw\\shapes\\img_hexagon.jpg";
-	MenuItemImages[DRAW_ITM_CIRCLE] = "images\\draw\\shapes\\img_circle.jpg";
-	MenuItemImages[DRAW_ITM_SELECT] = "images\\draw\\other\\img_select.jpg";
-
-	MenuItemImages[DRAW_ITM_COL_BLACK] = "images\\draw\\colors\\img_black.jpg";
-	MenuItemImages[DRAW_ITM_COL_YELLOW] = "images\\draw\\colors\\img_yellow.jpg";
-	MenuItemImages[DRAW_ITM_COL_ORANGE] = "images\\draw\\colors\\img_orange.jpg";
-	MenuItemImages[DRAW_ITM_COL_RED] = "images\\draw\\colors\\img_red.jpg";
-	MenuItemImages[DRAW_ITM_COL_GREEN] = "images\\draw\\colors\\img_green.jpg";
-	MenuItemImages[DRAW_ITM_COL_BLUE] = "images\\draw\\colors\\img_blue.jpg";
-
-	//draw toolbar icons
-	for (int i = 0; i < DRAW_ITM_COUNT; i++)
-	{
-		int x = i * (UI.MenuItemWidth + UI.IconSeperatorWidth) + UI.IconPadding.left; // seperatorwidth for padding purposes and to draw the line seperator
-		pWind->DrawImage(MenuItemImages[i],
-			x,
-			UI.IconPadding.top,
-			UI.MenuItemWidth - UI.IconPadding.right - UI.IconPadding.left,
-			UI.ToolBarHeight - UI.IconPadding.bottom - UI.IconPadding.top);
-
-		//draw a black line after icon
-		pWind->SetPen(BLACK, UI.IconSeperatorWidth);
-		pWind->DrawLine(x + UI.MenuItemWidth, 0, x + UI.MenuItemWidth, UI.ToolBarHeight);
-	}
-
-	//Draw a line under the toolbar
-	pWind->SetPen(RED, 3);
-	pWind->DrawLine(0, UI.ToolBarHeight + 1, UI.width, UI.ToolBarHeight + 1); // +1 to account for the extra pixel rendered (line width = 3)
-
-}
-//////////////////////////////////////////////////////////////////////////////////////////
-
-void Output::CreatePlayToolBar() const
-{
-	UI.InterfaceMode = MODE_PLAY;
-	///TODO: write code to create Play mode menu
-}
-//////////////////////////////////////////////////////////////////////////////////////////
 
 void Output::ClearDrawArea() const
 {
 	pWind->SetPen(UI.BkGrndColor, 1);
 	pWind->SetBrush(UI.BkGrndColor);
-	pWind->DrawRectangle(0, UI.ToolBarHeight, UI.width, UI.height - UI.StatusBarHeight);
-	
+	pWind->DrawRectangle(UI.DrawAreaStartOffset, UI.ToolBarHeight + 3, UI.width, UI.height - UI.StatusBarHeight); //ammar: adjusted iY1 because of the toolbar line seperator
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -275,31 +228,26 @@ void Output::DrawHexagon(Point center, bool selected) const
 	GfxInfo* gfxInfo;
 	drawstyle style = PrepareFigureRendering(selected, &gfxInfo);
 
-	//draw it as a circle with 6 segments
-	float _2pi = 2 * M_PI;
-	float adv = _2pi / 6.0f;
-
-	int x[6];
-	int y[6];
-
-	int idx = 0;
-	for (float theta = adv; theta < _2pi; theta += adv)
-	{
-		x[idx] = center.x + cosf(theta) * gfxInfo->fixed_radius;
-		y[idx] = center.y - sinf(theta) * gfxInfo->fixed_radius;
-		idx++;
-	}
+	int* x = 0;
+	int* y = 0;
+	GetSegmentedCirclePoints(center, 6, gfxInfo->fixed_radius, &x, &y);
 
 	pWind->DrawPolygon(x, y, 6, style);
+
+	delete[] x;
+	delete[] y;
 }
 
-void Output::DrawCircle(Point center, Point radiusPoint, bool selected) const
+void Output::DrawCircle(Point center, Point radiusPoint, bool selected, int* outRadius) const
 {
 	//prepare figure and get drawstyle
 	drawstyle style = PrepareFigureRendering(selected);
 
 	//calculate distance between the 2 points
-	int radius = (int)sqrtf(powf(center.x - radiusPoint.x, 2.0f) + powf(center.y - radiusPoint.y, 2.0f));
+	int radius = ((Vector2)center - radiusPoint).Magnitude();
+
+	if (outRadius) *outRadius = radius;
+
 	pWind->DrawCircle(center.x, center.y, radius, style);
 }
 

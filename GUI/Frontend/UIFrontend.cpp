@@ -1,18 +1,25 @@
 #include "UIFrontend.h"
 #include "UISprite.h"
 #include "UILineRenderer.h"
+#include "UIToggleButton.h"
 #include "../UI_Info.h"
 #include "../../Core/Application.h"
 
 #define TOOLBAR_SPACING 15
 
-UIFrontend::UIFrontend()
+UIFrontend::UIFrontend(Application* app)
 {
+	m_Application = app;
+
 	//initialize display
 	m_Display = new UIDisplay(Vector2(UI.width, UI.height));
 
+	//instantiate components
 	CreateToolBar();
 	CreateStatusBar();
+
+	//instantiate other elements
+	CreateOtherElements();
 }
 
 void UIFrontend::CreateToolBar()
@@ -38,7 +45,7 @@ void UIFrontend::CreateToolBar()
 	BuildPlayModeToolBar();
 
 	//create drawing area
-	m_DrawingArea = new UIWindow(
+	/*m_DrawingArea = new UIWindow(
 		m_Display,
 		UIAnchor::None,
 		Rect(0, UI.ToolBarHeight + 10, UI.width, UI.height - UI.ToolBarHeight - UI.StatusBarHeight - 10),
@@ -46,7 +53,7 @@ void UIFrontend::CreateToolBar()
 		false,
 		[]() {
 			GetApplication()->GetOutput()->PrintMessage("Clicked on Drawing Area");
-		});
+		});*/
 
 	//set to draw mode by default
 	SetCurrentMode(false, false);
@@ -74,6 +81,21 @@ void UIFrontend::CreateStatusBar()
 		"");
 }
 
+void UIFrontend::CreateOtherElements()
+{
+	//recording label
+	m_RecordingLabel = new UILabel(
+		m_Display,
+		UIAnchor::BottomRight,
+		Rect(105, UI.StatusBarHeight + 40, 105, 40),
+		24,
+		"REC"
+	);
+
+	//initially false
+	SetRecording(false);
+}
+
 void UIFrontend::BuildDrawModeToolBar()
 {
 	//shapes textures
@@ -98,7 +120,7 @@ void UIFrontend::BuildDrawModeToolBar()
 		m_Toolbar,
 		UIAnchor::None,
 		Rect(dx, 0, UI.MenuItemWidth * DWSHAPE_COUNT, UI.ToolBarHeight),
-		true,
+		false,
 		DWSHAPE_COUNT,
 		shapeTextures,
 		shapeActions,
@@ -131,6 +153,9 @@ void UIFrontend::BuildDrawModeToolBar()
 		colorActions,
 		Color(255, 255, 255, 255));
 
+	//set black initially selected
+	m_ColorPalette->UpdateSelectedButton(0, false);
+
 	dx += m_ColorPalette->ScreenRect().w + TOOLBAR_SPACING; //increment dx with color pallete's width + 5 px padding
 
 	//color mode
@@ -154,6 +179,9 @@ void UIFrontend::BuildDrawModeToolBar()
 		colorModeActions,
 		Color(255, 0, 0, 255));
 
+	//set draw initially selected
+	m_ColorPrefList->UpdateSelectedButton(1, false);
+
 	dx += m_ColorPrefList->ScreenRect().w + TOOLBAR_SPACING;
 
 	//other actions
@@ -166,7 +194,7 @@ void UIFrontend::BuildDrawModeToolBar()
 	otherTextures[DWOTHER_OPEN_GRAPH] = "images\\draw\\other\\img_open.jpg";
 	otherTextures[DWOTHER_REC_START] = "images\\draw\\other\\img_rec_start.jpg";
 	otherTextures[DWOTHER_REC_STOP] = "images\\draw\\other\\img_rec_stop.jpg";
-	otherTextures[DWOTHER_REC_PAUSE] = "images\\draw\\other\\img_rec_pause.jpg";
+	otherTextures[DWOTHER_REC_PLAY] = "images\\draw\\other\\img_rec_pause.jpg";
 	otherTextures[DWOTHER_UNDO] = "images\\draw\\other\\img_undo.jpg";
 	otherTextures[DWOTHER_REDO] = "images\\draw\\other\\img_redo.jpg";
 	otherTextures[DWOTHER_PLAY] = "images\\draw\\other\\img_play.jpg";
@@ -187,6 +215,56 @@ void UIFrontend::BuildDrawModeToolBar()
 		otherTextures,
 		otherActions,
 		Color(255, 0, 0, 255));
+
+	//left widgets
+	m_DWLeftWidgetsContainer = new UIWindow(
+		m_Display,
+		UIAnchor::None,
+		Rect(0, UI.ToolBarHeight + 3, UI.DrawAreaStartOffset, 3 * UI.ToolBarHeight),
+		Color(UI.BkGrndColor.ucRed, UI.BkGrndColor.ucGreen, UI.BkGrndColor.ucBlue, 255)
+	);
+
+	//create the 3 buttons
+	
+	int dy = 0;
+
+	//sound button
+	(new UIToggleButton(
+		m_DWLeftWidgetsContainer,
+		UIAnchor::None,
+		Rect(0, 0, UI.MenuItemWidth, UI.ToolBarHeight),
+		"images\\draw\\other\\img_sound_off.jpg",
+		"images\\draw\\other\\img_sound_on.jpg"
+	))->SetCallback(std::bind(&UIFrontend::OnSoundButtonStateChanged, this));
+
+	dy += UI.ToolBarHeight;
+
+	(new UIImageButton(
+		m_DWLeftWidgetsContainer,
+		UIAnchor::None,
+		Rect(0, dy, UI.MenuItemWidth, UI.ToolBarHeight),
+		"images\\draw\\other\\img_drag.jpg",
+		Color(255, 255, 255, 255)
+	))->SetCallback(std::bind(&UIFrontend::OnDragButtonClick, this));
+
+	dy += UI.ToolBarHeight;
+
+	(new UIImageButton(
+		m_DWLeftWidgetsContainer,
+		UIAnchor::None,
+		Rect(0, dy, UI.MenuItemWidth, UI.ToolBarHeight),
+		"images\\draw\\other\\img_resize.jpg",
+		Color(255, 255, 255, 255)
+	))->SetCallback(std::bind(&UIFrontend::OnResizeButtonClick, this));;
+
+	for (int i = 0; i < 4; i++) {
+		new UILineRenderer(m_DWLeftWidgetsContainer,
+			UIAnchor::None,
+			Rect(0, i * UI.ToolBarHeight, UI.MenuItemWidth, UI.IconSeperatorWidth - 1),
+			UI.IconSeperatorWidth + 2,
+			Color(0, 0, 0, 255) //black
+		);
+	}
 }
 
 void UIFrontend::BuildPlayModeToolBar()
@@ -246,12 +324,31 @@ void UIFrontend::SetDrawModeState(bool enable)
 	m_ColorPalette->SetVisible(enable, false);
 	m_ColorPrefList->SetVisible(enable, false);
 	m_OtherActionsList->SetVisible(enable, false);
+	m_DWLeftWidgetsContainer->SetVisible(enable, false);
 }
 
 void UIFrontend::SetPlayModeState(bool enable)
 {
 	m_PickHideList->SetVisible(enable, false);
 	m_PlayOtherList->SetVisible(enable, false);
+}
+
+void UIFrontend::OnSoundButtonStateChanged()
+{
+	//invoke sound action
+	m_Application->HandleAction(ACTION_DRAW_EXTRA_SOUND);
+}
+
+void UIFrontend::OnDragButtonClick()
+{
+	//invoke drag action
+	m_Application->HandleAction(ACTION_DRAW_EXTRA_DRAG);
+}
+
+void UIFrontend::OnResizeButtonClick()
+{
+	//invoke resize action
+	m_Application->HandleAction(ACTION_DRAW_EXTRA_RESIZE);
 }
 
 UIFrontend::~UIFrontend()
@@ -264,7 +361,7 @@ void UIFrontend::Render()
 	m_Display->Draw();
 }
 
-void UIFrontend::SetStatusBarText(string txt)
+void UIFrontend::SetStatusBarText(string txt) const
 {
 	m_StatusBarLabel->SetText(txt);
 }
@@ -283,6 +380,46 @@ void UIFrontend::SetCurrentMode(bool isPlayMode, bool notify)
 	//redraw
 	if (notify)
 	{
+		//clear left bar too
+
+		Rect rect = m_DWLeftWidgetsContainer->ScreenRect();
+		rect.w += 3; //extra px
+		rect.h += 3;
+
+		m_Application->GetOutput()->DrawRect(
+			rect,
+			Color(UI.BkGrndColor.ucRed, UI.BkGrndColor.ucGreen, UI.BkGrndColor.ucBlue, 255)
+		);
+
 		m_Display->Draw();
+	}
+}
+
+void UIFrontend::Reset()
+{
+	//reset to initial state
+	m_ColorPalette->UpdateSelectedButton(DWCOLOR_BLACK, false);
+	m_ColorPrefList->UpdateSelectedButton(DWCOLORMODE_DRAW, false);
+}
+
+void UIFrontend::SetSelectedColor(DWColors color)
+{
+	m_ColorPalette->UpdateSelectedButton(color);
+}
+
+void UIFrontend::SetSelectedColorMode(DWColorModes mode)
+{
+	m_ColorPrefList->UpdateSelectedButton(mode);
+}
+
+void UIFrontend::SetRecording(bool recording, bool invokeDirty, std::string text)
+{
+	//update rec label vis state
+	m_RecordingLabel->SetVisible(recording, invokeDirty);
+
+	if (recording)
+	{
+		//change text but dont notify, we will re-render on our own
+		m_RecordingLabel->SetText(text, false);
 	}
 }
