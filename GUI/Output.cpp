@@ -118,7 +118,7 @@ void Output::ClearDrawArea() const
 {
 	pWind->SetPen(UI.BkGrndColor, 1);
 	pWind->SetBrush(UI.BkGrndColor);
-	pWind->DrawRectangle(UI.DrawAreaStartOffset, UI.ToolBarHeight + 3, UI.width, UI.height - UI.StatusBarHeight); //ammar: adjusted iY1 because of the toolbar line seperator
+	pWind->DrawRectangle(0, UI.ToolBarHeight + 3, UI.width, UI.height - UI.StatusBarHeight); //ammar: adjusted iY1 because of the toolbar line seperator
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

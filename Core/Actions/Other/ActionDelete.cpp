@@ -6,6 +6,13 @@
 ActionDelete::ActionDelete(Application* app) : Action(app)
 {
 	m_DeletedFigure = 0;
+	m_DeletedFigureID = -1;
+
+	CFigure* selectedFig = m_Application->GetSelectedFigure();
+	if (selectedFig != 0)
+	{
+		m_DeletedFigureID = selectedFig->GetID();
+	}
 }
 
 ActionDelete::~ActionDelete()
@@ -24,7 +31,7 @@ void ActionDelete::ReadActionParameters()
 
 void ActionDelete::Execute()
 {
-	CFigure* selectedFig = m_Application->GetSelectedFigure();
+	CFigure* selectedFig = m_Application->GetFigureWithID(m_DeletedFigureID);
 	
 	//display error message if no figure is selected
 	if (selectedFig == 0)

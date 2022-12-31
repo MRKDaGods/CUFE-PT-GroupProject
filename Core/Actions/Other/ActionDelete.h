@@ -8,6 +8,7 @@ class ActionDelete : public Action
 {
 private:
 	CFigure* m_DeletedFigure;
+	int m_DeletedFigureID;
 
 public:
 	ActionDelete(Application* app);

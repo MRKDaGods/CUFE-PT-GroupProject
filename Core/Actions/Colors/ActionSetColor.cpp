@@ -10,6 +10,13 @@ ActionSetColor::ActionSetColor(Application* app, DWColors color) : Action(app)
 	m_ColorMode = m_Application->GetCurrentColorMode();
 
 	m_OldFillState = m_Application->GetGfxInfo()->is_filled;
+
+	m_FigureID = -1;
+	CFigure* selectedFig = m_Application->GetSelectedFigure();
+	if (selectedFig != 0)
+	{
+		m_FigureID = selectedFig->GetID();
+	}
 }
 
 void ActionSetColor::SetColor(DWColors col, bool restoreFillState)
@@ -62,7 +69,7 @@ void ActionSetColor::SetColor(DWColors col, bool restoreFillState)
 	GfxInfo* globalGfxInfo = m_Application->GetGfxInfo();
 
 	//check if we have a selected figure to modify
-	CFigure* selectedFig = m_Application->GetSelectedFigure();
+	CFigure* selectedFig = m_Application->GetFigureWithID(m_FigureID);
 
 	switch (m_Application->GetCurrentColorMode())
 	{

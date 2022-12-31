@@ -211,6 +211,9 @@ Application::Application()
 	//initialize sound
 	m_Sound = new Sound();
 
+	//base id is 0
+	ResetGlobalID();
+
 	//init rand
 	srand(time(0));
 }
@@ -246,7 +249,7 @@ void Application::Render(bool clearDrawArea, bool renderFrontend)
 
 	for (int i = 0; i < m_FigureCount; i++)
 	{
-		if (m_FigureList[i])
+		if (m_FigureList[i] != 0)
 		{
 			m_FigureList[i]->Draw(m_Output);
 		}
@@ -386,7 +389,7 @@ UIFrontend* Application::GetUIFrontend()
 	return m_Frontend;
 }
 
-void Application::HandleAction(const ActionType& type)
+void Application::HandleAction(const ActionType& type, bool silent)
 {
 	DebugLog("Handling action...");
 
@@ -412,14 +415,17 @@ void Application::HandleAction(const ActionType& type)
 		//execute action
 		action->Execute();
 
-		//action history should delete the last executed action incase it was an unsupported one
-		//no memory leaks :)
-		m_ActionHistory->AddAction(action);
-
-		//if recording, add to recorder
-		if (m_Recorder->IsRecording())
+		if (!silent)
 		{
-			m_Recorder->RecordAction(action);
+			//action history should delete the last executed action incase it was an unsupported one
+			//no memory leaks :)
+			m_ActionHistory->AddAction(action);
+
+			//if recording, add to recorder
+			if (m_Recorder->IsRecording())
+			{
+				m_Recorder->RecordAction(action);
+			}
 		}
 
 		//output action history debug
@@ -564,6 +570,19 @@ CFigure* Application::GetFigure(int x, int y) const
 	for (int i = 0; i < m_FigureCount; i++)
 	{
 		if (m_FigureList[i]->HitTest(Point{ x, y }))
+		{
+			return m_FigureList[i];
+		}
+	}
+
+	return 0;
+}
+
+CFigure* Application::GetFigureWithID(int id)
+{
+	for (int i = 0; i < m_FigureCount; i++)
+	{
+		if (m_FigureList[i]->GetID() == id)
 		{
 			return m_FigureList[i];
 		}
@@ -719,4 +738,14 @@ color Application::GetRandomColorForShape(DWShape shape)
 Sound* Application::GetSound()
 {
 	return m_Sound;
+}
+
+int Application::AllocateFigureID()
+{
+	return m_GlobalID++;
+}
+
+void Application::ResetGlobalID()
+{
+	m_GlobalID = 0;
 }

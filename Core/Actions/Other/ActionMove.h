@@ -11,7 +11,7 @@ private:
 	Point m_Destination;
 	int m_Dx;
 	int m_Dy;
-	CFigure* m_MovedFigure;
+	int m_MovedID;
 
 public:
 	ActionMove(Application* app);

@@ -8,7 +8,7 @@ class CFigure;
 class ActionSelect : public Action
 {
 private:
-	CFigure* m_SelectedFig;
+	int m_SelectedID;
 
 public:
 	ActionSelect(Application* app);

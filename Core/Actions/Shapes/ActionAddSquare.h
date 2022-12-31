@@ -3,14 +3,13 @@
 #include "../Action.h"
 #include "../../../DEFS.h"
 
-class CSquare;
-
 //Add Square Action class
 class ActionAddSquare : public Action
 {
 private:
 	Point m_Center;
-	CSquare* m_Square;
+	int m_FigureID;
+	GfxInfo m_GfxInfo;
 
 public:
 	ActionAddSquare(Application* app);

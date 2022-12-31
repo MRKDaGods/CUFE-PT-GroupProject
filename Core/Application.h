@@ -69,6 +69,9 @@ private:
 	//Responsible for playing sound
 	Sound* m_Sound;
 
+	//Base global id
+	int m_GlobalID;
+
 	//Prints a message to the status bar
 	void Print(string msg) const;
 
@@ -114,7 +117,7 @@ public:
 	UIFrontend* GetUIFrontend();
 
 	//Handles an action of ActionType type
-	void HandleAction(const ActionType& type);
+	void HandleAction(const ActionType& type, bool silent = false);
 
 	//Terminates the app
 	void Exit();
@@ -140,6 +143,9 @@ public:
 
 	//Search for a figure given a point inside the figure
 	CFigure* GetFigure(int x, int y) const;
+
+	//Searches for a figure with a specific ID
+	CFigure* GetFigureWithID(int id);
 
 	//Returns true if a figure exists
 	bool ContainsFigure(CFigure* fig);
@@ -182,4 +188,10 @@ public:
 
 	//Returns a pointer to a sound
 	Sound* GetSound();
+
+	//Returns a new unique ID for a shape
+	int AllocateFigureID();
+
+	//Resets the global ID
+	void ResetGlobalID();
 };

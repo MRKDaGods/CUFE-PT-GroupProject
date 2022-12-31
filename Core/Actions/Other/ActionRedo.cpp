@@ -26,6 +26,10 @@ void ActionRedo::Execute()
 
 		//put back in history
 		history->Push(nextAction, false);
+
+		char buf[100];
+		sprintf(buf, "REDP: Re-did action of type %d", nextAction->GetActionType());
+		m_Frontend->SetStatusBarText(buf);
 	}
 }
 

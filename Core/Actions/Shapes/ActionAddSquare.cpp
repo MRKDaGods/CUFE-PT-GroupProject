@@ -6,7 +6,8 @@ ActionAddSquare::ActionAddSquare(Application* app) : Action(app)
 {
 	m_Center = Point();
 
-	m_Square = 0;
+	//the figure ID
+	m_FigureID = m_Application->AllocateFigureID();
 }
 
 void ActionAddSquare::ReadActionParameters()
@@ -23,16 +24,21 @@ void ActionAddSquare::Execute()
 {
 	//create a square
 	//gfxInfo should be a copy of Application::GetGfxInfo
-	m_Square = new CSquare(m_Center, *m_Application->GetGfxInfo());
+	m_GfxInfo = *m_Application->GetGfxInfo();
+	CSquare* sqr = new CSquare(m_FigureID, m_Center, m_GfxInfo);
 
 	//add square to the list of figures
-	m_Application->AddFigure(m_Square);
+	m_Application->AddFigure(sqr);
 }
 
 void ActionAddSquare::Undo()
 {
-	m_Application->DeleteFigure(m_Square);
-	m_Application->Render(true); //re-render
+	CFigure* fig = m_Application->GetFigureWithID(m_FigureID);
+	if (fig != 0)
+	{
+		m_Application->DeleteFigure(fig);
+		m_Application->Render(true); //re-render
+	}
 }
 
 ActionType ActionAddSquare::GetActionType()

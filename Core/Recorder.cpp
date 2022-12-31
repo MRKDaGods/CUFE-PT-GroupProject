@@ -16,6 +16,9 @@ Recorder::Recorder(Application* app)
 	
 	//initialially not recording
 	SetRecording(false);
+
+	//initially not playing
+	m_IsPlaying = false;
 }
 
 void Recorder::ResetRecordingBuffer()
@@ -138,6 +141,9 @@ void Recorder::PlayRecording(std::function<void(int, int)> callback)
 	{
 		//execute the action
 		m_Actions[i]->Execute();
+
+		//add history
+		m_Application->GetActionHistory()->AddAction(m_Actions[i]);
 
 		//TODO: update arguments or automate clicks for action arguments
 
