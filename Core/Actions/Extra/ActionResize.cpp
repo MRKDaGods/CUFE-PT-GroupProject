@@ -13,7 +13,7 @@ ActionResize::ActionResize(Application* app) : Action(app)
 void ActionResize::ReadActionParameters()
 {
 	//display msg
-	m_Frontend->SetStatusBarText("RESIZE: Click a point inside the shape then start dragging");
+	m_Frontend->SetStatusBarText("RESIZE: Hold one of the nodes to start dragging");
 
 	//no null checks, we know that SelectedFigure is not null
 	CFigure* selectedFig = m_Application->GetSelectedFigure();
