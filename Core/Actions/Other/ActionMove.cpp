@@ -9,9 +9,9 @@ ActionMove::ActionMove(Application* app) : Action(app)
 	m_Dx = m_Dy = 0;
 
 	m_MovedID = -1;
+
 	//check for selection first
 	CFigure* selectedFig = m_Application->GetSelectedFigure();
-
 	if (selectedFig != 0)
 	{
 		m_MovedID = selectedFig->GetID();
@@ -49,7 +49,7 @@ void ActionMove::Execute()
 	selectedFig->Translate(m_Dx, m_Dy);
 
 	char buf[100];
-	sprintf(buf, "MOVE: Figured by %d to the left and %d to the bottom", m_Dx, m_Dy);
+	sprintf(buf, "MOVE: Figure moved by %d to the right and %d to the bottom", m_Dx, m_Dy);
 	m_Frontend->SetStatusBarText(buf);
 
 	//notify application to update again and clear drawing area
