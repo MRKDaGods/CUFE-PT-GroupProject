@@ -5,7 +5,7 @@
 
 ActionSelect::ActionSelect(Application* app) : Action(app)
 {
-	m_SelectedFig = 0;
+	m_SelectedID = -1;
 }
 
 void ActionSelect::ReadActionParameters()
@@ -17,23 +17,28 @@ void ActionSelect::ReadActionParameters()
 	m_Input->GetPointClicked(buf.x, buf.y);
 
 	//find figure, null if not found
-	m_SelectedFig = m_Application->GetFigure(buf.x, buf.y);
+	CFigure* fig = m_Application->GetFigure(buf.x, buf.y);
+	if (fig != 0)
+	{
+		m_SelectedID = fig->GetID();
+	}
 }
 
 void ActionSelect::Execute()
 {
 	//if selected fig is null, just ignore
-	if (m_SelectedFig == 0)
+	CFigure* selectedFig = m_Application->GetFigureWithID(m_SelectedID);
+	if (selectedFig == 0)
 	{
 		m_Frontend->SetStatusBarText("");
 		return;
 	}
 
 	//if fig is already selected, unselect it
-	if (m_SelectedFig->IsSelected())
+	if (selectedFig->IsSelected())
 	{
 		//unselect
-		m_SelectedFig->SetSelected(false);
+		selectedFig->SetSelected(false);
 
 		//update selected fig in application
 		m_Application->SetSelectedFigure(0);
@@ -51,13 +56,13 @@ void ActionSelect::Execute()
 		}
 
 		//mark figure selected
-		m_SelectedFig->SetSelected(true);
+		selectedFig->SetSelected(true);
 
 		//update selected fig in application
-		m_Application->SetSelectedFigure(m_SelectedFig);
+		m_Application->SetSelectedFigure(selectedFig);
 
 		//print figure info
-		m_SelectedFig->PrintInfo(m_Frontend);
+		selectedFig->PrintInfo(m_Frontend);
 	}
 
 	//notify application to update

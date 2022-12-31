@@ -24,6 +24,12 @@ void ActionClearAll::Execute()
 	//set selected figure to null
 	m_Application->SetSelectedFigure(0);
 
+	//reset global id
+	m_Application->ResetGlobalID();
+
+	//reset global gfx info
+	m_Application->SetGfxInfo();
+
 	//clear history
 	m_Application->GetActionHistory()->Clear();
 

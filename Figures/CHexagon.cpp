@@ -2,17 +2,28 @@
 #include "../Core/Application.h"
 #include "../Utils/GeoUtils.h"
 
-CHexagon::CHexagon(Point center, GfxInfo gfxInfo) : CFigure(gfxInfo)
+CHexagon::CHexagon(int figID, Point center, GfxInfo gfxInfo) : CFigure(figID, gfxInfo)
 {
 	m_Center = center;
 }
 
-CHexagon::CHexagon(GfxInfo gfxInfo) : CFigure(gfxInfo)
+CHexagon::CHexagon(GfxInfo gfxInfo) : CFigure(-1, gfxInfo)
 {
 	m_Center = Point();
 }
 
-void CHexagon::Draw(Output* pOut) const
+void CHexagon::GetNodes(FigureNode*** nodes, int* sz)
+{
+	if (nodes == 0) return;
+
+	*sz = 1;
+
+	*nodes = new FigureNode* [1] {
+		&m_Node
+	};
+}
+
+void CHexagon::Draw(Output* pOut)
 {
 	Application* app = GetApplication();
 
@@ -24,6 +35,21 @@ void CHexagon::Draw(Output* pOut) const
 
 	//pop gfx info
 	app->PopGfxInfo();
+
+	//render nodes
+	if (m_ShouldRenderNodes)
+	{
+		//@ theta = 0
+		//centerx + cosf(theta) * radius;
+		//centery - sinf(theta) * radius;
+
+		m_Node.SetPosition(Point{
+			m_Center.x + m_GfxInfo.fixed_radius,
+			m_Center.y
+		});
+
+		m_Node.RenderNode(pOut);
+	}
 }
 
 bool CHexagon::HitTest(Point hit)
@@ -64,15 +90,12 @@ void CHexagon::Translate(int dx, int dy)
 	m_Center.y += dy;
 }
 
-void CHexagon::Resize(int dx, int dy)
+void CHexagon::Resize(FigureNode* targetNode)
 {
-	//change the fixed radius by the magnitude of these 2 multiplied by both's sign
-	int mag = dx * dx + dy * dy;
+	//radius is magnitude of vector between node pos and center
+	Vector2 dir = (Vector2)m_Center - m_Node.GetPosition();
 
-	//for ex: if dx is negative, and dy is positive, we will decrease the fixed radius
-	int dir = SIGN(dx) * SIGN(dy);
-
-	m_GfxInfo.fixed_radius += mag * dir;
+	m_GfxInfo.fixed_radius = dir.Magnitude();
 }
 
 Point CHexagon::GetPosition()

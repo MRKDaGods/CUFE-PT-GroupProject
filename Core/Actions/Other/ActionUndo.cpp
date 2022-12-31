@@ -26,6 +26,11 @@ void ActionUndo::Execute()
 
 	//pop the circular buffer
 	history->Pop();
+
+	//display undo info
+	char buf[100];
+	sprintf(buf, "UNDO: Un-did action of type %d", mostRecent->GetActionType());
+	m_Frontend->SetStatusBarText(buf);
 }
 
 ActionType ActionUndo::GetActionType()

@@ -1,7 +1,7 @@
 #include "CRectangle.h"
 #include "../Core/Application.h"
 
-CRectangle::CRectangle(Point p1, Point p2, GfxInfo gfxInfo) : CFigure(gfxInfo)
+CRectangle::CRectangle(int figID, Point p1, Point p2, GfxInfo gfxInfo) : CFigure(figID, gfxInfo)
 {
 	m_P1 = p1;
 	m_P2 = p2;
@@ -10,7 +10,7 @@ CRectangle::CRectangle(Point p1, Point p2, GfxInfo gfxInfo) : CFigure(gfxInfo)
 	UpdateScreenSpaceRect();
 }
 
-CRectangle::CRectangle(GfxInfo gfxInfo) : CFigure(gfxInfo)
+CRectangle::CRectangle(GfxInfo gfxInfo) : CFigure(-1, gfxInfo)
 {
 	m_P1 = m_P2 = Point();
 	m_Rect = Rect();
@@ -28,7 +28,18 @@ void CRectangle::UpdateScreenSpaceRect()
 	m_Rect = Rect(xmin, ymin, xmax - xmin, ymax - ymin);
 }
 
-void CRectangle::Draw(Output* pOut) const
+void CRectangle::GetNodes(FigureNode*** nodes, int* sz)
+{
+	if (nodes == 0) return;
+
+	*sz = 4;
+
+	*nodes = new FigureNode* [4] {
+		&(m_Nodes[0]), &(m_Nodes[1]), &(m_Nodes[2]), &(m_Nodes[3]),
+	};
+}
+
+void CRectangle::Draw(Output* pOut)
 {
 	Application* app = GetApplication();
 
@@ -40,6 +51,23 @@ void CRectangle::Draw(Output* pOut) const
 
 	//pop gfx info
 	app->PopGfxInfo();
+
+	//render nodes
+	if (m_ShouldRenderNodes)
+	{
+		Point points[4] { 
+			Point{ (int)m_Rect.XMin(), (int)m_Rect.YMin() },
+			Point{ (int)m_Rect.XMax(), (int)m_Rect.YMin() },
+			Point{ (int)m_Rect.XMin(), (int)m_Rect.YMax() },
+			Point{ (int)m_Rect.XMax(), (int)m_Rect.YMax() }
+		};
+
+		for (int i = 0; i < 4; i++)
+		{
+			m_Nodes[i].SetPosition(points[i]);
+			m_Nodes[i].RenderNode(pOut);
+		}
+	}
 }
 
 bool CRectangle::HitTest(Point hit)
@@ -69,17 +97,55 @@ void CRectangle::Translate(int dx, int dy)
 	UpdateScreenSpaceRect();
 }
 
-void CRectangle::Resize(int dx, int dy)
+void CRectangle::Resize(FigureNode* targetNode)
 {
-	//change our rect values and reflect them on our points
-	m_Rect.w += dx;
-	m_Rect.h += dy;
+	int nodeIdx = -1;
+	for (int i = 0; i < 4; i++)
+	{
+		if (&(m_Nodes[i]) == targetNode)
+		{
+			nodeIdx = i;
+			break;
+		}
+	}
 
-	//p1 is xmin ymin, p2 is xmax ymax
-	m_P1 = Point{ (int)m_Rect.XMin(), (int)m_Rect.YMin() };
-	m_P1 = Point{ (int)m_Rect.XMax(), (int)m_Rect.YMax() };
+	int x1 = m_Rect.XMin();
+	int y1 = m_Rect.YMin(); 
+	int x2 = m_Rect.XMax(); 
+	int y2 = m_Rect.YMax();
 
-	//no need to recalculate rect
+	Point nodePos = targetNode->GetPosition();
+
+	switch (nodeIdx)
+	{
+	case 0:
+		x1 = nodePos.x;
+		y1 = nodePos.y;
+		break;
+
+	case 1:
+		x2 = nodePos.x;
+		y1 = nodePos.y;
+		break;
+
+	case 2:
+		x1 = nodePos.x;
+		y2 = nodePos.y;
+		break;
+
+	case 3:
+		x2 = nodePos.x;
+		y2 = nodePos.y;
+		break;
+	}
+
+	//top left
+	m_P1 = Point{ x1, y1 };
+
+	//bottom right
+	m_P2 = Point{ x2, y2 };
+
+	//update rect
 	UpdateScreenSpaceRect();
 }
 

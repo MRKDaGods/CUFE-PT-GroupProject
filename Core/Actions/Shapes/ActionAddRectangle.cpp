@@ -6,7 +6,8 @@ ActionAddRectangle::ActionAddRectangle(Application* app) : Action(app)
 {
 	m_P1 = m_P2 = Point();
 
-	m_Rectangle = 0;
+	//the figure ID
+	m_FigureID = m_Application->AllocateFigureID();
 }
 
 void ActionAddRectangle::ReadActionParameters()
@@ -28,16 +29,21 @@ void ActionAddRectangle::Execute()
 {
 	//create a rectangle
 	//gfxInfo should be a copy of Application::GetGfxInfo
-	m_Rectangle = new CRectangle(m_P1, m_P2, *m_Application->GetGfxInfo());
+	m_GfxInfo = *m_Application->GetGfxInfo();
+	CRectangle* rect = new CRectangle(m_FigureID, m_P1, m_P2, m_GfxInfo);
 
 	//add the rectangle to the list of figures
-	m_Application->AddFigure(m_Rectangle);
+	m_Application->AddFigure(rect);
 }
 
 void ActionAddRectangle::Undo()
 {
-	m_Application->DeleteFigure(m_Rectangle);
-	m_Application->Render(true); //re-render
+	CFigure* fig = m_Application->GetFigureWithID(m_FigureID);
+	if (fig != 0)
+	{
+		m_Application->DeleteFigure(fig);
+		m_Application->Render(true); //re-render
+	}
 }
 
 ActionType ActionAddRectangle::GetActionType()

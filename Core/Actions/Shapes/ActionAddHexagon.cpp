@@ -6,7 +6,8 @@ ActionAddHexagon::ActionAddHexagon(Application* app) : Action(app)
 {
 	m_Center = Point();
 
-	m_Hexagon = 0;
+	//the figure ID
+	m_FigureID = m_Application->AllocateFigureID();
 }
 
 void ActionAddHexagon::ReadActionParameters()
@@ -23,16 +24,21 @@ void ActionAddHexagon::Execute()
 {
 	//create a hexagon
 	//gfxInfo should be a copy of Application::GetGfxInfo
-	m_Hexagon = new CHexagon(m_Center, *m_Application->GetGfxInfo());
+	m_GfxInfo = *m_Application->GetGfxInfo();
+	CHexagon* hex = new CHexagon(m_FigureID, m_Center, m_GfxInfo);
 
 	//add hexagon to the list of figures
-	m_Application->AddFigure(m_Hexagon);
+	m_Application->AddFigure(hex);
 }
 
 void ActionAddHexagon::Undo()
 {
-	m_Application->DeleteFigure(m_Hexagon);
-	m_Application->Render(true); //re-render
+	CFigure* fig = m_Application->GetFigureWithID(m_FigureID);
+	if (fig != 0)
+	{
+		m_Application->DeleteFigure(fig);
+		m_Application->Render(true); //re-render
+	}
 }
 
 ActionType ActionAddHexagon::GetActionType()

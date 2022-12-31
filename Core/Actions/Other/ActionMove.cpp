@@ -7,7 +7,15 @@ ActionMove::ActionMove(Application* app) : Action(app)
 {
 	m_Destination = Point();
 	m_Dx = m_Dy = 0;
-	m_MovedFigure = 0;
+
+	m_MovedID = -1;
+	//check for selection first
+	CFigure* selectedFig = m_Application->GetSelectedFigure();
+
+	if (selectedFig != 0)
+	{
+		m_MovedID = selectedFig->GetID();
+	}
 }
 
 void ActionMove::ReadActionParameters()
@@ -23,7 +31,7 @@ void ActionMove::ReadActionParameters()
 void ActionMove::Execute()
 {
 	//check for selection first
-	CFigure* selectedFig = m_Application->GetSelectedFigure();
+	CFigure* selectedFig = m_Application->GetFigureWithID(m_MovedID);
 
 	//display error message if no figure is selected
 	if (selectedFig == 0)
@@ -40,8 +48,6 @@ void ActionMove::Execute()
 	//translate the figure
 	selectedFig->Translate(m_Dx, m_Dy);
 
-	m_MovedFigure = selectedFig;
-
 	char buf[100];
 	sprintf(buf, "MOVE: Figured by %d to the left and %d to the bottom", m_Dx, m_Dy);
 	m_Frontend->SetStatusBarText(buf);
@@ -54,10 +60,11 @@ void ActionMove::Undo()
 {
 	//2 checks
 	//Moved figure not null AND it still exists in figure list, as it might have been deleted
-	if (m_MovedFigure != 0 && m_Application->ContainsFigure(m_MovedFigure))
+	CFigure* movedFig = m_Application->GetFigureWithID(m_MovedID);
+	if (movedFig != 0)
 	{
 		//found it, now translate inversely
-		m_MovedFigure->Translate(-m_Dx, -m_Dy);
+		movedFig->Translate(-m_Dx, -m_Dy);
 
 		//notify application to update again and clear drawing area
 		m_Application->Render(true);

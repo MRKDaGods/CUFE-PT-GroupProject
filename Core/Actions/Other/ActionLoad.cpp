@@ -39,17 +39,8 @@ void ActionLoad::Execute()
 	}
 
 	//clear everything
-	//taken from ActionClearAll
-	m_Frontend->Reset();
-
-	//delete all figures
-	m_Application->DeleteAllFigures();
-
-	//set selected figure to null
-	m_Application->SetSelectedFigure(0);
-
-	//clear history
-	m_Application->GetActionHistory()->Clear();
+	//invoke ActionClearAll
+	m_Application->HandleAction(ACTION_DRAW_OTHER_CLEAR_ALL);
 
 	//now read graph data
 

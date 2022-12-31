@@ -4,19 +4,30 @@
 
 #include <sstream>
 
-CTriangle::CTriangle(Point p1, Point p2, Point p3, GfxInfo gfxInfo) : CFigure(gfxInfo)
+CTriangle::CTriangle(int figID, Point p1, Point p2, Point p3, GfxInfo gfxInfo) : CFigure(figID, gfxInfo)
 {
 	m_P1 = p1;
 	m_P2 = p2;
 	m_P3 = p3;
 }
 
-CTriangle::CTriangle(GfxInfo gfxInfo) : CFigure(gfxInfo)
+CTriangle::CTriangle(GfxInfo gfxInfo) : CFigure(-1, gfxInfo)
 {
-	m_P1 = m_P2 = m_P3;
+	m_P1 = m_P2 = m_P3 = Point();
 }
 
-void CTriangle::Draw(Output* pOut) const
+void CTriangle::GetNodes(FigureNode*** nodes, int* sz)
+{
+	if (nodes == 0) return;
+
+	*sz = 3;
+
+	*nodes = new FigureNode* [3] {
+		&(m_Nodes[0]), & (m_Nodes[1]), & (m_Nodes[2])
+	};
+}
+
+void CTriangle::Draw(Output* pOut)
 {
 	Application* app = GetApplication();
 
@@ -28,6 +39,20 @@ void CTriangle::Draw(Output* pOut) const
 
 	//pop gfx info
 	app->PopGfxInfo();
+
+	//render nodes
+	if (m_ShouldRenderNodes)
+	{
+		Point points[3] {
+			m_P1, m_P2, m_P3
+		};
+
+		for (int i = 0; i < 3; i++)
+		{
+			m_Nodes[i].SetPosition(points[i]);
+			m_Nodes[i].RenderNode(pOut);
+		}
+	}
 }
 
 bool CTriangle::HitTest(Point hit)
@@ -61,43 +86,11 @@ void CTriangle::Translate(int dx, int dy)
 	m_P3.y += dy;
 }
 
-void CTriangle::Resize(int dx, int dy)
+void CTriangle::Resize(FigureNode* targetNode)
 {
-	//so thinking about it
-	//we can get the direction vector from the centroid to the point
-	//and translate the point along that direction multiplied by magnitude and dir from the hexagon approach
-
-	//get centroid
-	Point centroid = GetPosition();
-
-	//first dir vector
-	Vector2 v1 = ((Vector2)m_P1 - centroid).Normalize();
-
-	//second dir vector
-	Vector2 v2 = ((Vector2)m_P2 - centroid).Normalize();
-
-	//third dir vector
-	Vector2 v3 = ((Vector2)m_P3 - centroid).Normalize();
-
-	//get mag and dir using hexagon approach
-	//change the fixed radius by the magnitude of these 2 multiplied by both's sign
-	int mag = dx * dx + dy * dy;
-
-	//for ex: if dx is negative, and dy is positive, we will decrease the fixed radius
-	int dir = SIGN(dx) * SIGN(dy);
-
-	//translate points accordingly
-
-	float change = mag * dir;
-
-	//calculate new points
-	Vector2 newP1 = (Vector2)m_P1 + v1 * change;
-	Vector2 newP2 = (Vector2)m_P2 + v2 * change;
-	Vector2 newP3 = (Vector2)m_P3 + v3 * change;
-
-	m_P1 = newP1;
-	m_P2 = newP2;
-	m_P3 = newP3;
+	m_P1 = m_Nodes[0].GetPosition();
+	m_P2 = m_Nodes[1].GetPosition();
+	m_P3 = m_Nodes[2].GetPosition();
 }
 
 Point CTriangle::GetPosition()

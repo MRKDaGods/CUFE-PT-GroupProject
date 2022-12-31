@@ -3,8 +3,6 @@
 #include "../Action.h"
 #include "../../../DEFS.h"
 
-class CTriangle;
-
 //Add Triangle Action class
 class ActionAddTriangle : public Action
 {
@@ -12,7 +10,8 @@ private:
 	Point m_P1;
 	Point m_P2;
 	Point m_P3;
-	CTriangle* m_Triangle;
+	int m_FigureID;
+	GfxInfo m_GfxInfo;
 
 public:
 	ActionAddTriangle(Application* app);

@@ -156,6 +156,7 @@
     <ClCompile Include="Core\Actions\Shapes\ActionAddSquare.cpp" />
     <ClCompile Include="Core\Actions\Shapes\ActionAddTriangle.cpp" />
     <ClCompile Include="Core\Deserializer.cpp" />
+    <ClCompile Include="Figures\FigureNode.cpp" />
     <ClCompile Include="Figures\CCircle.cpp" />
     <ClCompile Include="Figures\CFigure.cpp" />
     <ClCompile Include="Figures\CHexagon.cpp" />
@@ -240,6 +241,7 @@
     <ClInclude Include="Core\Deserializer.h" />
     <ClInclude Include="Core\Recorder.h" />
     <ClInclude Include="Core\Graph.h" />
+    <ClInclude Include="Figures\FigureNode.h" />
     <ClInclude Include="GUI\Frontend\UIToggleButton.h" />
     <ClInclude Include="Core\Sound.h" />
     <ClInclude Include="Utils\CircularBuffer.hpp" />

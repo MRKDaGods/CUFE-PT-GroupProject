@@ -157,6 +157,13 @@ void ActionPickAndHide::Execute()
     //so first of all, restore the graph, we want it brand new :)
     m_Application->GetGraph()->Restore();
 
+    //if there are no figures, dont continue
+    if (m_Application->GetFigureCount() == 0)
+    {
+        m_Frontend->SetStatusBarText("PICK AND HIDE: No shapes, cannot start game");
+        return;
+    }
+
     //graph restored, now init
     InitGameData();
 

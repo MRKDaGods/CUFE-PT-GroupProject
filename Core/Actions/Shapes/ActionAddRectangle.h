@@ -3,15 +3,14 @@
 #include "../Action.h"
 #include "../../../DEFS.h"
 
-class CRectangle;
-
 //Add Rectangle Action class
 class ActionAddRectangle : public Action
 {
 private:
 	Point m_P1;
 	Point m_P2;
-	CRectangle* m_Rectangle;
+	int m_FigureID;
+	GfxInfo m_GfxInfo;
 
 public:
 	ActionAddRectangle(Application* app);

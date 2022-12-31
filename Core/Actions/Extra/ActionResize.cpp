@@ -1,10 +1,13 @@
 #include "ActionResize.h"
 #include "../../Application.h"
+#include "../../../Figures/FigureNode.h"
 
 ActionResize::ActionResize(Application* app) : Action(app)
 {
 	m_InitialPoint = Point();
 	m_Down = false;
+
+	m_Node = 0;
 }
 
 void ActionResize::ReadActionParameters()
@@ -12,16 +15,26 @@ void ActionResize::ReadActionParameters()
 	//display msg
 	m_Frontend->SetStatusBarText("RESIZE: Click a point inside the shape then start dragging");
 
+	//no null checks, we know that SelectedFigure is not null
+	CFigure* selectedFig = m_Application->GetSelectedFigure();
+
+	//enable figure nodes
+	selectedFig->SetNodeRenderingState(true);
+
+	//just re-render figures
+	m_Application->Render(false, false);
+
 	//keep reading mouse position until mouse is down
 	do
 	{
 		m_InitialPoint = m_Input->GetMousePos();
 	} while (!m_Input->GetRealTimeMouseDown());
 
+	m_Node = selectedFig->GetNode(m_InitialPoint);
+
 	//check if point is inside selected figure
-	//no null checks, we know that SelectedFigure is not null
 	//set down state to true if we clicked inside the figure
-	m_Down = m_Application->GetSelectedFigure()->HitTest(m_InitialPoint);
+	m_Down = m_Node != 0;
 }
 
 void ActionResize::Execute()
@@ -40,7 +53,14 @@ void ActionResize::Execute()
 	if (!m_Down)
 	{
 		//display error
-		m_Frontend->SetStatusBarText("RESIZE: Shape not clicked");
+		m_Frontend->SetStatusBarText("RESIZE: No node clicked");
+
+		//remove node
+		selectedFig->SetNodeRenderingState(false);
+
+		//update
+		m_Application->Render(true);
+
 		return;
 	}
 
@@ -71,19 +91,23 @@ void ActionResize::Execute()
 			continue;
 		}
 
-		//calculate delta between mousePos and reference
-		int dx = mousePos.x - m_InitialPoint.x;
-		int dy = mousePos.y - m_InitialPoint.y;
+		m_Node->SetPosition(mousePos);
 
 		//update reference
 		m_InitialPoint = mousePos;
 
 		//translate figure
-		selectedFig->Resize(dx, dy);
+		selectedFig->Resize(m_Node);
 
 		//just render our shapes
 		m_Application->Render(true, false);
 	}
+
+	//turn off nodes
+	selectedFig->SetNodeRenderingState(false);
+
+	//update
+	m_Application->Render(true);
 
 	//display finish message
 	m_Frontend->SetStatusBarText("RESIZE: Stopped resizing");

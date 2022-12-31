@@ -6,7 +6,8 @@ ActionAddTriangle::ActionAddTriangle(Application* app) : Action(app)
 {
 	m_P1 = m_P2 = m_P3 = Point();
 
-	m_Triangle = 0;
+	//the figure ID
+	m_FigureID = m_Application->AllocateFigureID();
 }
 
 void ActionAddTriangle::ReadActionParameters()
@@ -31,16 +32,21 @@ void ActionAddTriangle::Execute()
 {
 	//create a triangle
 	//gfxInfo should be a copy of Application::GetGfxInfo
-	m_Triangle = new CTriangle(m_P1, m_P2, m_P3, *m_Application->GetGfxInfo());
+	m_GfxInfo = *m_Application->GetGfxInfo();
+	CTriangle* tri = new CTriangle(m_FigureID, m_P1, m_P2, m_P3, m_GfxInfo);
 
 	//add triangle to the list of figures
-	m_Application->AddFigure(m_Triangle);
+	m_Application->AddFigure(tri);
 }
 
 void ActionAddTriangle::Undo()
 {
-	m_Application->DeleteFigure(m_Triangle);
-	m_Application->Render(true); //re-render
+	CFigure* fig = m_Application->GetFigureWithID(m_FigureID);
+	if (fig != 0)
+	{
+		m_Application->DeleteFigure(fig);
+		m_Application->Render(true); //re-render
+	}
 }
 
 ActionType ActionAddTriangle::GetActionType()

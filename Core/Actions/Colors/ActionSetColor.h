@@ -12,6 +12,9 @@ private:
 	DWColorModes m_ColorMode;
 	bool m_OldFillState;
 
+	//ID of figure that has been changed
+	int m_FigureID;
+
 	//Sets the current color
 	void SetColor(DWColors col, bool restoreFillState);
 

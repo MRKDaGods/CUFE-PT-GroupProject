@@ -3,14 +3,13 @@
 #include "../Action.h"
 #include "../../../DEFS.h"
 
-class CHexagon;
-
 //Add Hexagon Action class
 class ActionAddHexagon : public Action
 {
 private:
 	Point m_Center;
-	CHexagon* m_Hexagon;
+	int m_FigureID;
+	GfxInfo m_GfxInfo;
 
 public:
 	ActionAddHexagon(Application* app);

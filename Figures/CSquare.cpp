@@ -2,14 +2,14 @@
 
 #include "../Core/Application.h"
 
-CSquare::CSquare(Point center, GfxInfo gfxInfo) : CFigure(gfxInfo)
+CSquare::CSquare(int figID, Point center, GfxInfo gfxInfo) : CFigure(figID, gfxInfo)
 {
 	m_Center = center;
 
 	UpdateScreenSpaceRect();
 }
 
-CSquare::CSquare(GfxInfo gfxInfo) : CFigure(gfxInfo)
+CSquare::CSquare(GfxInfo gfxInfo) : CFigure(-1, gfxInfo)
 {
 	m_Center = Point();
 	m_Rect = Rect();
@@ -26,7 +26,18 @@ void CSquare::UpdateScreenSpaceRect()
 	m_Rect = Rect(xmin, ymin, dim, dim);
 }
 
-void CSquare::Draw(Output* pOut) const
+void CSquare::GetNodes(FigureNode*** nodes, int* sz)
+{
+	if (nodes == 0) return;
+
+	*sz = 4;
+
+	*nodes = new FigureNode * [4] {
+		&(m_Nodes[0]), &(m_Nodes[1]), &(m_Nodes[2]), &(m_Nodes[3]),
+	};
+}
+
+void CSquare::Draw(Output* pOut)
 {
 	Application* app = GetApplication();
 
@@ -38,6 +49,23 @@ void CSquare::Draw(Output* pOut) const
 
 	//pop gfx info
 	app->PopGfxInfo();
+
+	//render nodes
+	if (m_ShouldRenderNodes)
+	{
+		Point points[4]{
+			Point{ (int)m_Rect.XMin(), (int)m_Rect.YMin() },
+			Point{ (int)m_Rect.XMax(), (int)m_Rect.YMin() },
+			Point{ (int)m_Rect.XMin(), (int)m_Rect.YMax() },
+			Point{ (int)m_Rect.XMax(), (int)m_Rect.YMax() }
+		};
+
+		for (int i = 0; i < 4; i++)
+		{
+			m_Nodes[i].SetPosition(points[i]);
+			m_Nodes[i].RenderNode(pOut);
+		}
+	}
 }
 
 bool CSquare::HitTest(Point hit)
@@ -64,16 +92,15 @@ void CSquare::Translate(int dx, int dy)
 	UpdateScreenSpaceRect();
 }
 
-void CSquare::Resize(int dx, int dy)
+void CSquare::Resize(FigureNode* targetNode)
 {
-	//we will use the same approach as hexagon
-	//change the fixed radius by the magnitude of these 2 multiplied by both's sign
-	int mag = dx * dx + dy * dy;
+	//radius is magnitude of vector between node pos and center
+	Vector2 dir = (Vector2)m_Center - targetNode->GetPosition();
 
-	//for ex: if dx is negative, and dy is positive, we will decrease the fixed radius
-	int dir = SIGN(dx) * SIGN(dy);
+	m_GfxInfo.fixed_radius = dir.Magnitude();
 
-	m_GfxInfo.fixed_radius += mag * dir;
+	//update rect
+	UpdateScreenSpaceRect();
 }
 
 Point CSquare::GetPosition()

@@ -2,7 +2,7 @@
 
 #include "../Core/Application.h"
 
-CCircle::CCircle(Point center, Point radiusPoint, GfxInfo gfxInfo) : CFigure(gfxInfo)
+CCircle::CCircle(int figID, Point center, Point radiusPoint, GfxInfo gfxInfo) : CFigure(figID, gfxInfo)
 {
 	m_Center = center;
 	m_RadiusPoint = radiusPoint;
@@ -10,7 +10,7 @@ CCircle::CCircle(Point center, Point radiusPoint, GfxInfo gfxInfo) : CFigure(gfx
 	UpdateRadius();
 }
 
-CCircle::CCircle(GfxInfo gfxInfo) : CFigure(gfxInfo)
+CCircle::CCircle(GfxInfo gfxInfo) : CFigure(-1, gfxInfo)
 {
 	m_Center = m_RadiusPoint = Point();
 	m_Radius = 0;
@@ -21,7 +21,19 @@ void CCircle::UpdateRadius()
 	m_Radius = ((Vector2)m_Center - m_RadiusPoint).Magnitude();
 }
 
-void CCircle::Draw(Output* pOut) const
+void CCircle::GetNodes(FigureNode*** nodes, int* sz)
+{
+	if (nodes == 0) return;
+
+	//circle has 1 node
+	*sz = 1;
+
+	*nodes = new FigureNode* [1] {
+		&m_Node
+	};
+}
+
+void CCircle::Draw(Output* pOut)
 {
 	Application* app = GetApplication();
 
@@ -33,6 +45,13 @@ void CCircle::Draw(Output* pOut) const
 
 	//pop gfx info
 	app->PopGfxInfo();
+
+	//render nodes
+	if (m_ShouldRenderNodes) 
+	{
+		m_Node.SetPosition(m_RadiusPoint);
+		m_Node.RenderNode(pOut);
+	}
 }
 
 bool CCircle::HitTest(Point hit)
@@ -61,14 +80,13 @@ void CCircle::Translate(int dx, int dy)
 	m_RadiusPoint.y += dy;
 }
 
-void CCircle::Resize(int dx, int dy)
+void CCircle::Resize(FigureNode* targetNode)
 {
 	//center is constant
 	//radius point would keep moving
-	m_RadiusPoint.x += dx;
-	m_RadiusPoint.y += dy;
+	m_RadiusPoint = m_Node.GetPosition();
 
-	//recalculate radius
+	UpdateRadius();
 }
 
 Point CCircle::GetPosition()
