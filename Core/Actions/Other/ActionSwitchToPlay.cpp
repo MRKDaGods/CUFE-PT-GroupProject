@@ -11,6 +11,12 @@ void ActionSwitchToPlay::ReadActionParameters()
 
 void ActionSwitchToPlay::Execute()
 {
+	//check for recording
+	if (m_Application->GetRecorder()->IsRecording()) {
+		m_Frontend->SetStatusBarText("DRAW MODE: Cannot switch to play mode while recording");
+		return;
+	}
+
 	//switch modes
 	m_Application->SetCurrentMode(true);
 

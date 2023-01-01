@@ -145,8 +145,6 @@ void Recorder::PlayRecording(std::function<void(int, int)> callback)
 		//add history
 		m_Application->GetActionHistory()->AddAction(m_Actions[i]);
 
-		//TODO: update arguments or automate clicks for action arguments
-
 		if (callback != 0)
 		{
 			callback(i, m_ActionCount);
@@ -158,6 +156,4 @@ void Recorder::PlayRecording(std::function<void(int, int)> callback)
 
 	//recording ended, remove flag
 	m_IsPlaying = false;
-
-	//TODO: prevent interactions while playings
 }
