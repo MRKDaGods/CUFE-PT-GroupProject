@@ -13,11 +13,11 @@ ActionAddCircle::ActionAddCircle(Application* app) : Action(app)
 void ActionAddCircle::ReadActionParameters()
 {
 	//get center
-	m_Frontend->SetStatusBarText("New Square: Click at center");
+	m_Frontend->SetStatusBarText("New Circle: Click at center");
 	m_Input->GetPointClicked(m_Center.x, m_Center.y);
 
 	//get radius
-	m_Frontend->SetStatusBarText("New Square: Click at radius point");
+	m_Frontend->SetStatusBarText("New Circle: Click at radius point");
 	m_Input->GetPointClicked(m_Radius.x, m_Radius.y);
 
 	//clear status bar

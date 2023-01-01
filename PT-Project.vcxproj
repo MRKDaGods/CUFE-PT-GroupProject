@@ -162,7 +162,6 @@
     <ClCompile Include="Figures\CHexagon.cpp" />
     <ClCompile Include="Figures\CRectangle.cpp" />
     <ClCompile Include="Figures\CSquare.cpp" />
-    <ClCompile Include="Core\ActionData.cpp" />
     <ClCompile Include="Core\Application.cpp" />
     <ClCompile Include="CMUgraphicsLib\auxil.cpp" />
     <ClCompile Include="CMUgraphicsLib\CMUgraphics.cpp" />
@@ -264,7 +263,6 @@
     <ClInclude Include="Figures\CHexagon.h" />
     <ClInclude Include="Figures\CRectangle.h" />
     <ClInclude Include="Figures\CSquare.h" />
-    <ClInclude Include="Core\ActionData.h" />
     <ClInclude Include="Core\Application.h" />
     <ClInclude Include="CMUgraphicsLib\auxil.h" />
     <ClInclude Include="CMUgraphicsLib\CMUgraphics.h" />

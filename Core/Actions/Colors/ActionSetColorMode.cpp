@@ -9,7 +9,7 @@ ActionSetColorMode::ActionSetColorMode(Application* app, DWColorModes mode) : Ac
 
 void ActionSetColorMode::SetColorMode(DWColorModes mode)
 {
-	//set gfx info is filled to true if m_ColorMode is DWCOLORMODE_FULL
+	//set gfx info is filled to true if m_ColorMode is DWCOLORMODE_FILL
 	bool isFill = mode == DWCOLORMODE_FILL;
 	m_Application->GetGfxInfo()->is_filled = isFill;
 

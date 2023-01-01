@@ -33,7 +33,6 @@
 #include "../Utils/Color.h"
 #include "Serializer.h"
 
-#include <map>
 #include <iostream>
 #include <sstream>
 #include <set>
@@ -45,127 +44,77 @@
 #define _ACT_FNPTR_COLMODE(mode) [](Application* app) -> Action* { return new ActionSetColorMode(app, mode); }
 #define _ACT_FNPTR_PICKANDHIDE(mode) [](Application* app) -> Action* { return new ActionPickAndHide(app, mode); }
 
-//ActionType to function pointer that returns a new instance of the action
-std::map<ActionType, ActionInstantiator> actionDataTable2 {
-	//////////////////////////////////////////////
-	//Shape actions
-	//////////////////////////////////////////////
-	{ ACTION_DRAW_SHAPE_RECTANGLE, _ACT_FNPTR(ActionAddRectangle) },
-	{ ACTION_DRAW_SHAPE_SQUARE, _ACT_FNPTR(ActionAddSquare) },
-	{ ACTION_DRAW_SHAPE_TRIANGLE, _ACT_FNPTR(ActionAddTriangle) },
-	{ ACTION_DRAW_SHAPE_HEXAGON, _ACT_FNPTR(ActionAddHexagon) },
-	{ ACTION_DRAW_SHAPE_CIRCLE, _ACT_FNPTR(ActionAddCircle) },
-
-	//////////////////////////////////////////////
-	//Color actions
-	//////////////////////////////////////////////
-	{ ACTION_DRAW_COL_BLACK, _ACT_FNPTR_COL(DWCOLOR_BLACK) },
-	{ ACTION_DRAW_COL_YELLOW, _ACT_FNPTR_COL(DWCOLOR_YELLOW) },
-	{ ACTION_DRAW_COL_ORANGE, _ACT_FNPTR_COL(DWCOLOR_ORANGE) },
-	{ ACTION_DRAW_COL_RED, _ACT_FNPTR_COL(DWCOLOR_RED) },
-	{ ACTION_DRAW_COL_GREEN, _ACT_FNPTR_COL(DWCOLOR_GREEN) },
-	{ ACTION_DRAW_COL_BLUE, _ACT_FNPTR_COL(DWCOLOR_BLUE) },
-
-	//////////////////////////////////////////////
-	//ColorMode actions
-	//////////////////////////////////////////////
-	{ ACTION_DRAW_COLMODE_FILL, _ACT_FNPTR_COLMODE(DWCOLORMODE_FILL) },
-	{ ACTION_DRAW_COLMODE_DRAW, _ACT_FNPTR_COLMODE(DWCOLORMODE_DRAW) },
-
-	//////////////////////////////////////////////
-	//Other actions
-	//////////////////////////////////////////////
-	{ ACTION_DRAW_OTHER_SELECT, _ACT_FNPTR(ActionSelect) },
-	{ ACTION_DRAW_OTHER_MOVE, _ACT_FNPTR(ActionMove) },
-	{ ACTION_DRAW_OTHER_DELETE_FIG, _ACT_FNPTR(ActionDelete) },
-	{ ACTION_DRAW_OTHER_CLEAR_ALL, _ACT_FNPTR(ActionClearAll) },
-	{ ACTION_DRAW_OTHER_SAVE_GRAPH, _ACT_FNPTR(ActionSave) },
-	{ ACTION_DRAW_OTHER_OPEN_GRAPH, _ACT_FNPTR(ActionLoad) },
-	{ ACTION_DRAW_OTHER_REC_START, _ACT_FNPTR(ActionStartRecording) },
-	{ ACTION_DRAW_OTHER_REC_STOP, _ACT_FNPTR(ActionStopRecording) },
-	{ ACTION_DRAW_OTHER_REC_PLAY, _ACT_FNPTR(ActionPlayRecording) },
-	{ ACTION_DRAW_OTHER_UNDO, _ACT_FNPTR(ActionUndo) },
-	{ ACTION_DRAW_OTHER_REDO, _ACT_FNPTR(ActionRedo) },
-	{ ACTION_DRAW_OTHER_PLAY, _ACT_FNPTR(ActionSwitchToPlay) },
-	{ ACTION_DRAW_OTHER_EXIT, _ACT_FNPTR(ActionExit) },
-
-	//////////////////////////////////////////////
-	//Play mode actions
-	//////////////////////////////////////////////
-	{ ACTION_PLAY_PICKHIDE_FIGTYPE, _ACT_FNPTR_PICKANDHIDE(PMPICKHIDE_FIG_TYPE) },
-	{ ACTION_PLAY_PICKHIDE_FIGCOL, _ACT_FNPTR_PICKANDHIDE(PMPICKHIDE_FIG_COL) },
-	{ ACTION_PLAY_PICKHIDE_FIGTYPE_COL, _ACT_FNPTR_PICKANDHIDE(PMPICKHIDE_FIG_TYPE_COL) },
-	{ ACTION_PLAY_OTHER_DRAW, _ACT_FNPTR(ActionSwitchToDraw) },
-
-	//////////////////////////////////////////////
-	//Extra actions (bonus)
-	//////////////////////////////////////////////
-	{ ACTION_DRAW_EXTRA_SOUND, _ACT_FNPTR(ActionSound) },
-	{ ACTION_DRAW_EXTRA_DRAG, _ACT_FNPTR(ActionDrag) },
-	{ ACTION_DRAW_EXTRA_RESIZE, _ACT_FNPTR(ActionResize) },
-};
-
-std::map<ActionType, ActionData*> actionDataTable {
-	//////////////////////////////////////////////
-	//Shape actions
-	//////////////////////////////////////////////
-	{ ACTION_DRAW_SHAPE_RECTANGLE, action_draw_shape_rectangle },
-	{ ACTION_DRAW_SHAPE_SQUARE, action_draw_shape_square },
-	{ ACTION_DRAW_SHAPE_TRIANGLE, action_draw_shape_triangle },
-	{ ACTION_DRAW_SHAPE_HEXAGON, action_draw_shape_hexagon },
-	{ ACTION_DRAW_SHAPE_CIRCLE, action_draw_shape_circle },
-
-	//////////////////////////////////////////////
-	//Color actions
-	//////////////////////////////////////////////
-	{ ACTION_DRAW_COL_BLACK, action_draw_col_black },
-	{ ACTION_DRAW_COL_YELLOW, action_draw_col_yellow },
-	{ ACTION_DRAW_COL_ORANGE, action_draw_col_orange },
-	{ ACTION_DRAW_COL_RED, action_draw_col_red },
-	{ ACTION_DRAW_COL_GREEN, action_draw_col_green },
-	{ ACTION_DRAW_COL_BLUE, action_draw_col_blue },
-
-	//////////////////////////////////////////////
-	//ColorMode actions
-	//////////////////////////////////////////////
-	{ ACTION_DRAW_COLMODE_FILL, action_draw_colmode_fill },
-	{ ACTION_DRAW_COLMODE_DRAW, action_draw_colmode_draw },
-
-	//////////////////////////////////////////////
-	//Other actions
-	//////////////////////////////////////////////
-	{ ACTION_DRAW_OTHER_SELECT, action_draw_other_select },
-	{ ACTION_DRAW_OTHER_MOVE, action_draw_other_move },
-	{ ACTION_DRAW_OTHER_DELETE_FIG, action_draw_other_delete_fig },
-	{ ACTION_DRAW_OTHER_CLEAR_ALL, action_draw_other_clear_all },
-	{ ACTION_DRAW_OTHER_SAVE_GRAPH, action_draw_other_save_graph },
-	{ ACTION_DRAW_OTHER_OPEN_GRAPH, action_draw_other_open_graph },
-	{ ACTION_DRAW_OTHER_REC_START, action_draw_other_rec_start },
-	{ ACTION_DRAW_OTHER_REC_STOP, action_draw_other_rec_stop },
-	{ ACTION_DRAW_OTHER_REC_PLAY, action_draw_other_rec_pause },
-	{ ACTION_DRAW_OTHER_UNDO, action_draw_other_undo },
-	{ ACTION_DRAW_OTHER_REDO, action_draw_other_redo },
-	{ ACTION_DRAW_OTHER_PLAY, action_draw_other_play },
-	{ ACTION_DRAW_OTHER_EXIT, action_draw_other_exit },
-
-	//////////////////////////////////////////////
-	//Play mode actions
-	//////////////////////////////////////////////
-	{ ACTION_PLAY_PICKHIDE_FIGTYPE, action_play_pickhide_figtype },
-	{ ACTION_PLAY_PICKHIDE_FIGCOL, action_play_pickhide_figcol },
-	{ ACTION_PLAY_PICKHIDE_FIGTYPE_COL, action_play_pickhide_figtype_col },
-	{ ACTION_PLAY_OTHER_DRAW, action_play_other_draw }
-};
-
 void Application::Print(string msg) const
 {
 	m_Frontend->SetStatusBarText(msg);
 }
 
+void Application::InitActionTable()
+{
+	m_ActionTable = {
+		//////////////////////////////////////////////
+		//Shape actions
+		//////////////////////////////////////////////
+		{ ACTION_DRAW_SHAPE_RECTANGLE, _ACT_FNPTR(ActionAddRectangle) },
+		{ ACTION_DRAW_SHAPE_SQUARE, _ACT_FNPTR(ActionAddSquare) },
+		{ ACTION_DRAW_SHAPE_TRIANGLE, _ACT_FNPTR(ActionAddTriangle) },
+		{ ACTION_DRAW_SHAPE_HEXAGON, _ACT_FNPTR(ActionAddHexagon) },
+		{ ACTION_DRAW_SHAPE_CIRCLE, _ACT_FNPTR(ActionAddCircle) },
+
+		//////////////////////////////////////////////
+		//Color actions
+		//////////////////////////////////////////////
+		{ ACTION_DRAW_COL_BLACK, _ACT_FNPTR_COL(DWCOLOR_BLACK) },
+		{ ACTION_DRAW_COL_YELLOW, _ACT_FNPTR_COL(DWCOLOR_YELLOW) },
+		{ ACTION_DRAW_COL_ORANGE, _ACT_FNPTR_COL(DWCOLOR_ORANGE) },
+		{ ACTION_DRAW_COL_RED, _ACT_FNPTR_COL(DWCOLOR_RED) },
+		{ ACTION_DRAW_COL_GREEN, _ACT_FNPTR_COL(DWCOLOR_GREEN) },
+		{ ACTION_DRAW_COL_BLUE, _ACT_FNPTR_COL(DWCOLOR_BLUE) },
+
+		//////////////////////////////////////////////
+		//ColorMode actions
+		//////////////////////////////////////////////
+		{ ACTION_DRAW_COLMODE_FILL, _ACT_FNPTR_COLMODE(DWCOLORMODE_FILL) },
+		{ ACTION_DRAW_COLMODE_DRAW, _ACT_FNPTR_COLMODE(DWCOLORMODE_DRAW) },
+
+		//////////////////////////////////////////////
+		//Other actions
+		//////////////////////////////////////////////
+		{ ACTION_DRAW_OTHER_SELECT, _ACT_FNPTR(ActionSelect) },
+		{ ACTION_DRAW_OTHER_MOVE, _ACT_FNPTR(ActionMove) },
+		{ ACTION_DRAW_OTHER_DELETE_FIG, _ACT_FNPTR(ActionDelete) },
+		{ ACTION_DRAW_OTHER_CLEAR_ALL, _ACT_FNPTR(ActionClearAll) },
+		{ ACTION_DRAW_OTHER_SAVE_GRAPH, _ACT_FNPTR(ActionSave) },
+		{ ACTION_DRAW_OTHER_OPEN_GRAPH, _ACT_FNPTR(ActionLoad) },
+		{ ACTION_DRAW_OTHER_REC_START, _ACT_FNPTR(ActionStartRecording) },
+		{ ACTION_DRAW_OTHER_REC_STOP, _ACT_FNPTR(ActionStopRecording) },
+		{ ACTION_DRAW_OTHER_REC_PLAY, _ACT_FNPTR(ActionPlayRecording) },
+		{ ACTION_DRAW_OTHER_UNDO, _ACT_FNPTR(ActionUndo) },
+		{ ACTION_DRAW_OTHER_REDO, _ACT_FNPTR(ActionRedo) },
+		{ ACTION_DRAW_OTHER_PLAY, _ACT_FNPTR(ActionSwitchToPlay) },
+		{ ACTION_DRAW_OTHER_EXIT, _ACT_FNPTR(ActionExit) },
+
+		//////////////////////////////////////////////
+		//Play mode actions
+		//////////////////////////////////////////////
+		{ ACTION_PLAY_PICKHIDE_FIGTYPE, _ACT_FNPTR_PICKANDHIDE(PMPICKHIDE_FIG_TYPE) },
+		{ ACTION_PLAY_PICKHIDE_FIGCOL, _ACT_FNPTR_PICKANDHIDE(PMPICKHIDE_FIG_COL) },
+		{ ACTION_PLAY_PICKHIDE_FIGTYPE_COL, _ACT_FNPTR_PICKANDHIDE(PMPICKHIDE_FIG_TYPE_COL) },
+		{ ACTION_PLAY_OTHER_DRAW, _ACT_FNPTR(ActionSwitchToDraw) },
+
+		//////////////////////////////////////////////
+		//Extra actions (bonus)
+		//////////////////////////////////////////////
+		{ ACTION_DRAW_EXTRA_SOUND, _ACT_FNPTR(ActionSound) },
+		{ ACTION_DRAW_EXTRA_DRAG, _ACT_FNPTR(ActionDrag) },
+		{ ACTION_DRAW_EXTRA_RESIZE, _ACT_FNPTR(ActionResize) },
+	};
+}
+
 ActionInstantiator Application::GetActionInstantiatorFromType(const ActionType& type)
 {
-	auto it = actionDataTable2.find(type);
-	return it != actionDataTable2.end() ? it->second : 0;
+	auto it = m_ActionTable.find(type);
+	return it != m_ActionTable.end() ? it->second : 0;
 }
 
 Application::Application()
@@ -180,6 +129,9 @@ Application::Application()
 
 	//set running
 	m_IsRunning = true;
+
+	//initialize action table
+	InitActionTable();
 
 	//add the initial gfx info to the stack
 	m_GfxStack.push(GfxInfo());
@@ -227,12 +179,6 @@ Application::~Application()
 	delete m_Recorder;
 	delete m_Graph;
 	delete m_Sound;
-
-	//delete action data as well
-	for (auto &x : actionDataTable)
-	{
-		delete x.second;
-	}
 }
 
 bool Application::IsRunning() const
@@ -672,8 +618,6 @@ void Application::GetDistinctFiguresInfo(std::vector<color>* colors, std::vector
 
 	//after adding to a set, we ensure that they contain unique elements
 	//initialize arrays
-	//store in a vector to put them in contiguous memory
-	//and then copy to pointer array
 	if (colors != 0)
 	{
 		*colors = std::vector<color>(cols.begin(), cols.end());
@@ -730,6 +674,8 @@ color Application::GetRandomColorForShape(DWShape shape)
 			cols.insert(m_FigureList[i]->GetGfxInfo()->fill_col);
 		}
 	}
+
+	//cols[rand() % cols.size()]
 
 	//return a random element from the set
 	return *std::next(cols.begin(), rand() % cols.size());

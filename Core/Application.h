@@ -3,6 +3,7 @@
 #include <functional>
 #include <stack>
 #include <vector>
+#include <map>
 
 #include "../GUI/Frontend/UIFrontend.h"
 #include "../GUI/Output.h"
@@ -10,7 +11,6 @@
 #include "../Common.h"
 #include "../Figures/CFigure.h"
 #include "Actions/Action.h"
-#include "ActionData.h"
 #include "ActionHistory.h"
 #include "Recorder.h"
 #include "Graph.h"
@@ -32,6 +32,9 @@ private:
 
 	//Is the application running?
 	bool m_IsRunning;
+
+	//ActionType to function pointer that returns a new instance of the action
+	std::map<ActionType, ActionInstantiator> m_ActionTable;
 
 	//Figure graphical information
 	std::stack<GfxInfo> m_GfxStack;
@@ -74,6 +77,9 @@ private:
 
 	//Prints a message to the status bar
 	void Print(string msg) const;
+
+	//Initializes the action table and adds all action handlers to the table
+	void InitActionTable();
 
 	//Returns an action instantiator from type, null if not found
 	ActionInstantiator GetActionInstantiatorFromType(const ActionType& type);
